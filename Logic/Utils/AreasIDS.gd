@@ -1,0 +1,10 @@
+extends Node
+
+class_name AreasIDS
+
+var SoldierID = 'SOLDIER'
+var UserID = 'PLAYER'
+var CommandID = 'COMMAND'
+var UserTeam = 'USER'
+var EnemyTeam = 'ENEMY'
+var CollisionerID = 'COLLISIONER'
