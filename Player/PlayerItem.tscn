@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://resources/ships/ship_player.png" type="Texture" id=1]
 [ext_resource path="res://Efects/PropulsionAnimation.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Player/PlayerItem.gd" type="Script" id=3]
+[ext_resource path="res://Shooter/Shooter.tscn" type="PackedScene" id=4]
 
 [sub_resource type="CapsuleShape2D" id=1]
 radius = 151.0
@@ -33,3 +34,6 @@ shape = SubResource( 2 )
 [node name="PropulsionAnimation" parent="." instance=ExtResource( 2 )]
 position = Vector2( 0, 500 )
 rotation = 3.14159
+
+[node name="Shooter" parent="." instance=ExtResource( 4 )]
+position = Vector2( 0, -603 )

@@ -3,6 +3,7 @@ extends KinematicBody2D
 onready var collisionDetector = $Collisioner
 
 onready var playerItem = $PlayerItem
+onready var Shooter = $PlayerItem/Shooter
 var Speed = 200
 var MoveDirection := Vector2()
 var LIMIT_X = 0
@@ -20,6 +21,7 @@ func _ready():
 func SetViewLimits(size: Vector2):
 	LIMIT_X = size.x
 	LIMIT_Y = size.y
+	Shooter.SetMapLimits(size)
 	pass
 
 func SetGameParameters(blocks_size: int, offset_positions: Vector2,map:Map):
@@ -55,6 +57,12 @@ func _physics_process(delta):
 	
 	if Input.is_action_pressed("rotate_right"):
 		$PlayerItem.rotation_degrees += 5
+		pass
+	
+	if Input.is_action_just_pressed("shoot"):
+		var bullet = Shooter.Shoot(TEAM)
+		bullet.rotation = playerItem.rotation
+		get_tree().current_scene.AddBullet(bullet)
 		pass
 
 	move_and_slide(MoveDirection * Speed)

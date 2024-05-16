@@ -22,6 +22,10 @@ var soldiers = []
 func CurrentMap():
 	return game_engine.GameMap
 
+func AddBullet(bullet) -> void:
+	add_child(bullet)
+	pass
+
 func GenerateSoldiers():
 	soldiers += game_engine.GenerateSoldiers(MAX_SOLDIERS,BLOCK_SIZE,OFFSET_POSITION,enemyInstancer,CurrentMap())
 	soldiers += game_engine.GenerateSoldiers(MAX_SOLDIERS,BLOCK_SIZE,OFFSET_POSITION,soldiersInstancer,CurrentMap())
