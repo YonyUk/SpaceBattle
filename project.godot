@@ -94,7 +94,9 @@ _global_script_class_icons={
 
 config/name="SpaceBattle"
 run/main_scene="res://MainScene.tscn"
-config/icon="res://icon.png"
+run/low_processor_mode=true
+config/icon="res://resources/ships/enemy_ship_2.png"
+config/windows_native_icon="res://resources/ships/enemy_ship_2.png"
 
 [gui]
 
@@ -128,4 +130,5 @@ common/enable_pause_aware_picking=true
 
 [rendering]
 
+threads/thread_model=2
 environment/default_environment="res://default_env.tres"

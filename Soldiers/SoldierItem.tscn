@@ -39,7 +39,7 @@ rotation = -0.666716
 shape = SubResource( 3 )
 
 [node name="ShipDirector" type="Node2D" parent="."]
-position = Vector2( 0, -4350 )
+position = Vector2( 58, -10000 )
 
 [node name="Collisioner" parent="." instance=ExtResource( 2 )]
 scale = Vector2( 15, 15 )

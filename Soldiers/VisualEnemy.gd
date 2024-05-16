@@ -5,6 +5,7 @@ class_name VisualEnemy
 onready var soldierItem = $EnemyItem
 onready var Body = $Body
 onready var VisionRange = sqrt(($EnemyItem/ShipDirector.global_position - global_position).length_squared())
+onready var Radar = $ShipRadar
 
 var GAME_ENGINE = null
 var GameMap = null
@@ -20,6 +21,14 @@ var TEAM = IDS.EnemyTeam
 var ShipsCollision = true
 var BLOCKS_SIZE = 1
 var OFFSET_POSITION = Vector2()
+var VISION_SCALE = 300
+
+## New changes
+
+func SetMapLimits(size:Vector2) -> void:
+	pass
+
+## Here ends the changes
 
 func SetGameParameters(blocks_size:int,offset_position: Vector2,game_engine) -> void:
 	BLOCKS_SIZE = blocks_size
@@ -33,11 +42,15 @@ func SetGameMap(map:Map):
 	pass
 
 func SetVisionRange(vision_range:float=300) -> void:
+	Radar = $ShipRadar
 	VisionRange = vision_range
+	Radar.scale = Vector2(VisionRange / VISION_SCALE,VisionRange / VISION_SCALE)
 	pass
 
 func AutoSetVisionRange() -> void:
+	Radar = $ShipRadar
 	VisionRange = sqrt(($EnemyItem/ShipDirector.global_position - global_position).length_squared())
+	Radar.scale = Vector2(VisionRange / VISION_SCALE,VisionRange / VISION_SCALE)
 	pass
 
 func ShipColisionEnable() -> void:

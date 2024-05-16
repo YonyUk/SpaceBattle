@@ -9,12 +9,13 @@ onready var soldiersInstancer = preload("res://Soldiers/VisualSoldier.tscn")
 var game_engine = GameEngine.new()
 var WIDTH = 0
 var HEIGHT = 0
-var ROW_SECTORS = 10
+var ROW_SECTORS = 5
 var COLUMN_SECTORS = 10
 var SECTORS_DIMENTIONS = 10
 var BLOCK_SIZE = 30
 var OFFSET_POSITION = Vector2(15,15)
 var MAX_SOLDIERS = 5
+var VisionRange = 300
 var Player = null
 var BackGround = null
 var soldiers = []
@@ -31,7 +32,9 @@ func GenerateSoldiers():
 	soldiers += game_engine.GenerateSoldiers(MAX_SOLDIERS,BLOCK_SIZE,OFFSET_POSITION,soldiersInstancer,CurrentMap())
 	for soldier in soldiers:
 		add_child(soldier)
+		soldier.SetMapLimits(GetMapLimits())
 		soldier.AutoSetVisionRange()
+		soldier.SetVisionRange(VisionRange)
 		pass
 	pass
 

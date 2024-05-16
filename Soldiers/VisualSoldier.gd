@@ -4,8 +4,11 @@ class_name VisualSoldier
 
 onready var soldierItem = $SoldierItem
 onready var Body = $Body
-onready var VisionRange = sqrt(($SoldierItem/ShipDirector.global_position - global_position).length_squared())
+onready var Shooter = $Shooter
+onready var ShooterTimer = $ShootingTimer
+onready var Radar = $ShipRadar
 
+var VisionRange = 300
 var GameMap = null
 var GAME_ENGINE = null
 var label = null
@@ -20,13 +23,14 @@ var TEAM = IDS.UserTeam
 var ShipsCollision = true
 var BLOCKS_SIZE = 1
 var OFFSET_POSITION = Vector2()
+var VISION_SCALE = 300
 
 # Control variables
 var selfFlagPosition = Vector2()
 var Perception = SoldierAgentPerception.new()
 var Brain = Predicates.new()
 var EnemysSeen = []
-
+var Shooting = true
 # Methods for the game
 
 func See() -> void:
@@ -52,6 +56,17 @@ func See() -> void:
 	else:
 		Perception.SetStateAttacking(false)
 		pass
+	pass
+
+func SetMapLimits(size:Vector2) -> void:
+	Shooter.SetMapLimits(size)
+	pass
+
+func Shoot() -> void:
+	Shooting = false
+	var bullet = Shooter.Shoot(TEAM)
+	bullet.rotation = rotation
+	get_tree().current_scene.AddBullet(bullet)
 	pass
 
 func RotateToEnemy(enemy) -> void:
@@ -103,11 +118,13 @@ func SetGameMap(map:Map):
 	pass
 
 func SetVisionRange(vision_range:float=300) -> void:
-	VisionRange = vision_range
+	Radar = $ShipRadar
+	Radar.scale = Vector2(vision_range / VISION_SCALE,vision_range / VISION_SCALE)
 	pass
 
 func AutoSetVisionRange() -> void:
-	VisionRange = sqrt(($SoldierItem/ShipDirector.global_position - global_position).length_squared())
+	Radar = $ShipRadar
+	Radar.scale = Vector2(VisionRange / VISION_SCALE,VisionRange / VISION_SCALE)
 	pass
 
 func ShipColisionEnable() -> void:
@@ -148,6 +165,10 @@ func MakeActions() -> void:
 	
 	# RotateActions
 	if Perception.CanRotate():
+		if Shooting:
+			ShooterTimer.start()
+			Shooting = false
+			pass
 		var vector_to_target = Perception.EnemySeen().global_position - global_position
 		rotation = vector_to_target.angle() + PI / 2
 		pass
@@ -238,4 +259,12 @@ func _on_ShipRadar_ShipRadarExited(ship):
 		var index = EnemysSeen.find(ship)
 		EnemysSeen.pop_at(index)
 		pass
+	pass # Replace with function body.
+
+
+func _on_ShootingTimer_timeout():
+	if Perception.CanShoot():
+		Shoot()
+		pass
+	Shooting = true
 	pass # Replace with function body.
