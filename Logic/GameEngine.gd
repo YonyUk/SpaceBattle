@@ -21,13 +21,13 @@ func GetPathTo(from:Vector2,to:Vector2) -> Array:
 func GetFreeMapPosition() -> Vector2:
 	return GameMap.GetFreePosition()
 
-func GenerateSoldiers(max_soldiers: int,blocks_size: int,offset_positions: Vector2,EnemyInstancer,map:Map) -> Array:
+func GenerateSoldiers(max_soldiers: int,blocks_size: int,offset_positions: Vector2,EnemyInstancer) -> Array:
 	var soldiers = []
 	var bussy_cells := []
 	for i in range(max_soldiers):
 		var pos = GetFreeMapPosition()
 		var soldier = EnemyInstancer.instance()
-		soldier.SetGameMap(map)
+		soldier.SetGameMap(GameMap)
 		soldier.SetGameParameters(blocks_size,offset_positions,self)
 		soldier.position = pos * blocks_size + offset_positions
 		pos = GetFreeMapPosition()
@@ -39,6 +39,17 @@ func GenerateSoldiers(max_soldiers: int,blocks_size: int,offset_positions: Vecto
 		pass
 	GameMap.FreeBussyCells(bussy_cells)
 	return soldiers
+
+func GenerateCommander(blocks_size:int,offset_positions:Vector2,CommandInstancer):
+	var bussy_cells := []
+	var pos = GetFreeMapPosition()
+	var commander = CommandInstancer.instance()
+	commander.SetGameMap(GameMap)
+	commander.SetGameParameters(blocks_size,offset_positions,self)
+	commander.position = pos * blocks_size + offset_positions
+	pos = GetFreeMapPosition()
+	commander.SetTargetPosition(pos * blocks_size + offset_positions)
+	return commander
 
 func VisionCollide(from:Vector2,to:Vector2) -> bool:
 	var result = false

@@ -14,8 +14,11 @@ var MoveLeft = false
 var MoveRight = false
 var ID = 'PLAYER'
 var TEAM = "USER"
+var LastPosition = Vector2()
+var LastRotation = 0
 
 func _ready():
+	LastPosition = global_position
 	pass # Replace with function body.
 
 func SetViewLimits(size: Vector2):
@@ -31,6 +34,13 @@ func SetGameParameters(blocks_size: int, offset_positions: Vector2,map:Map):
 
 func GetBussyCells() -> Array:
 	return $PlayerItem.GetBussyCells()
+
+func Rotate() -> void:
+	var vector = global_position - LastPosition
+	if vector.length_squared() > 0:
+		$PlayerItem.rotation = vector.angle() + PI / 2
+		pass
+	pass
 
 func _physics_process(delta):
 	MoveDirection = Vector2()
@@ -51,12 +61,20 @@ func _physics_process(delta):
 		MoveDirection.x += 1
 		pass
 	
+	move_and_slide(MoveDirection * Speed)
+	clamp(global_position.x,15,LIMIT_X - 15)
+	clamp(global_position.y,15,LIMIT_Y - 15)
+	
+	var rotating = false
+	
 	if Input.is_action_pressed("rotate_left"):
-		$PlayerItem.rotation_degrees -= 5
+		$PlayerItem.rotation_degrees -= 3
+		rotating = true
 		pass
 	
 	if Input.is_action_pressed("rotate_right"):
 		$PlayerItem.rotation_degrees += 5
+		rotating = true
 		pass
 	
 	if Input.is_action_just_pressed("shoot"):
@@ -65,7 +83,10 @@ func _physics_process(delta):
 		get_tree().current_scene.AddBullet(bullet)
 		pass
 
-	move_and_slide(MoveDirection * Speed)
-	clamp(global_position.x,15,LIMIT_X - 15)
-	clamp(global_position.y,15,LIMIT_Y - 15)
+# idea para implementar despues
+	if not rotating:
+		#Rotate()
+		pass
+	LastPosition = global_position
+	#LastRotation = rotation
 	pass

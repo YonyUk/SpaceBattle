@@ -5,37 +5,58 @@ onready var playerInstancer = preload("res://Player/Player.tscn")
 onready var backgroundInstancer = preload("res://background/BackGround.tscn")
 onready var enemyInstancer = preload("res://Soldiers/VisualEnemy.tscn")
 onready var soldiersInstancer = preload("res://Soldiers/VisualSoldier.tscn")
+onready var userCommanderInstancer = preload("res://Soldiers/Command/VisualComander.tscn")
 
 var game_engine = GameEngine.new()
 var WIDTH = 0
 var HEIGHT = 0
-var ROW_SECTORS = 5
+var ROW_SECTORS = 10
 var COLUMN_SECTORS = 10
-var SECTORS_DIMENTIONS = 10
+var SECTORS_DIMENTIONS = 30
 var BLOCK_SIZE = 30
 var OFFSET_POSITION = Vector2(15,15)
 var MAX_SOLDIERS = 5
 var VisionRange = 300
 var Player = null
 var BackGround = null
-var soldiers = []
+var UserSoldiers = []
+var EnemySoldiers = []
+var UserCommander = null
+var EnemyCommander = null
+var IDS = AreasIDS.new()
 
-func CurrentMap():
+func CurrentMap() -> Map:
 	return game_engine.GameMap
+
+func GetSubordinades(team:String) -> Array:
+	if team == IDS.UserTeam:
+		return UserSoldiers
+	return EnemySoldiers
 
 func AddBullet(bullet) -> void:
 	add_child(bullet)
 	pass
 
 func GenerateSoldiers():
-	soldiers += game_engine.GenerateSoldiers(MAX_SOLDIERS,BLOCK_SIZE,OFFSET_POSITION,enemyInstancer,CurrentMap())
-	soldiers += game_engine.GenerateSoldiers(MAX_SOLDIERS,BLOCK_SIZE,OFFSET_POSITION,soldiersInstancer,CurrentMap())
-	for soldier in soldiers:
+	EnemySoldiers += game_engine.GenerateSoldiers(MAX_SOLDIERS,BLOCK_SIZE,OFFSET_POSITION,enemyInstancer)
+	UserSoldiers += game_engine.GenerateSoldiers(MAX_SOLDIERS,BLOCK_SIZE,OFFSET_POSITION,soldiersInstancer)
+	for soldier in EnemySoldiers:
 		add_child(soldier)
 		soldier.SetMapLimits(GetMapLimits())
 		soldier.AutoSetVisionRange()
 		soldier.SetVisionRange(VisionRange)
 		pass
+	for soldier in UserSoldiers:
+		add_child(soldier)
+		soldier.SetMapLimits(GetMapLimits())
+		soldier.AutoSetVisionRange()
+		soldier.SetVisionRange(VisionRange)
+		pass
+	UserCommander = game_engine.GenerateCommander(BLOCK_SIZE,OFFSET_POSITION,userCommanderInstancer)
+	add_child(UserCommander)
+	UserCommander.SetMapLimits(GetMapLimits())
+	UserCommander.AutoSetVisionRange()
+	UserCommander.SetVisionRange(VisionRange)
 	pass
 
 func GetMapLimits():
@@ -59,11 +80,21 @@ func _ready():
 
 func _physics_process(delta):
 	BackGround.position = Player.position
-	for soldier in soldiers:
+	for soldier in EnemySoldiers:
 		if soldier.OnPosition:
 			var new_pos = game_engine.GetFreeMapPosition()
 			soldier.SetTargetPosition(new_pos * BLOCK_SIZE + OFFSET_POSITION)
 			pass
+		pass
+	for soldier in UserSoldiers:
+		if soldier.OnPosition:
+			var new_pos = game_engine.GetFreeMapPosition()
+			soldier.SetTargetPosition(new_pos * BLOCK_SIZE + OFFSET_POSITION)
+			pass
+		pass
+	if UserCommander.OnPosition:
+		var new_pos = game_engine.GetFreeMapPosition()
+		UserCommander.SetTargetPosition(new_pos * BLOCK_SIZE + OFFSET_POSITION)
 		pass
 	pass
 

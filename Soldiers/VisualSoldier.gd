@@ -102,6 +102,9 @@ func EnemySeen() -> Array:
 		pass
 	return result
 
+func GetEnemysSeen() -> Array:
+	return EnemysSeen
+
 func CanSeeToTarget(target) -> bool:
 	return not GAME_ENGINE.VisionCollide(global_position,target.global_position)
 # here ends the changes #################
@@ -240,7 +243,8 @@ func _on_VisualSoldier_body_entered(body):
 	pass # Replace with function body.
 
 func _on_VisualSoldier_area_entered(area):
-	if ShipsCollision and area.ID == IDS.SoldierID and area > self:
+	var IsShip = area.ID == IDS.SoldierID or area.ID == IDS.CommandID
+	if ShipsCollision and IsShip and area > self:
 		var bussy_cells = area.GetBussyCells()
 		GameMap.SetBussyCells(bussy_cells)
 		SetTargetPosition(TargetPosition)
@@ -260,7 +264,6 @@ func _on_ShipRadar_ShipRadarExited(ship):
 		EnemysSeen.pop_at(index)
 		pass
 	pass # Replace with function body.
-
 
 func _on_ShootingTimer_timeout():
 	if Perception.CanShoot():
