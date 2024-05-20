@@ -5,10 +5,72 @@ class_name GameEngine
 var GameMap = Map.new()
 var BLOCKS_SIZE = 0
 var OFFSET_POSITION = Vector2()
+var EnemyInstancer = null
+var SoldierInstancer = null
+var MaxSoldiers = 3
+var WIDTH = 0
+var HEIGHT = 0
+var ROW_SECTORS = 10
+var COLUMN_SECTORS = 10
+var SECTORS_DIMENTIONS = 10
+var VisionRange = 300
+var PerceptionLatency = 25
+var UserSoldiers = []
+var EnemySoldiers = []
+var UserCommanderInstancer = null
+var EnemyCommanderInstancer = null
+var UserCommander = null
+var EnemyCommander = null
+var IDS = AreasIDS.new()
 
 func SetMapParameters(blocks_size: int,offset_position: Vector2) -> void:
 	BLOCKS_SIZE = blocks_size
 	OFFSET_POSITION = offset_position
+	pass
+
+func GetMapLimits():
+	var x = COLUMN_SECTORS * SECTORS_DIMENTIONS
+	var y = ROW_SECTORS * SECTORS_DIMENTIONS
+	return Vector2(x,y) * BLOCKS_SIZE
+
+func SetUserCommanderInstancer(instancer) -> void:
+	UserCommanderInstancer = instancer
+	pass
+
+func SetEnemyCommanderInstancer(instancer) -> void:
+	EnemyCommanderInstancer = instancer
+	pass
+
+func SetVisionRange(vision_range:int) -> void:
+	VisionRange = vision_range
+	pass
+
+func SetPerceptionLatency(latency:int) -> void:
+	PerceptionLatency = latency
+	pass
+
+func SetRowSectors(rows:int) -> void:
+	ROW_SECTORS = rows
+	pass
+
+func SetColumnSectors(columns:int) -> void:
+	COLUMN_SECTORS = columns
+	pass
+
+func SetSectorsDimentions(dimentions:int) -> void:
+	SECTORS_DIMENTIONS = dimentions
+	pass
+
+func SetMaxSoldiers(max_soldiers: int) -> void:
+	MaxSoldiers = max_soldiers
+	pass
+
+func SetEnemyInstancer(instancer) -> void:
+	EnemyInstancer = instancer
+	pass
+
+func SetSoldierInstancer(instancer) -> void:
+	SoldierInstancer = instancer
 	pass
 
 func CreateMap(row=10,col=10,sectors=10):
@@ -21,17 +83,27 @@ func GetPathTo(from:Vector2,to:Vector2) -> Array:
 func GetFreeMapPosition() -> Vector2:
 	return GameMap.GetFreePosition()
 
-func GenerateSoldiers(max_soldiers: int,blocks_size: int,offset_positions: Vector2,EnemyInstancer) -> Array:
+func GenerateSoldiers(team:String) -> Array:
 	var soldiers = []
 	var bussy_cells := []
-	for i in range(max_soldiers):
+	for i in range(MaxSoldiers):
 		var pos = GetFreeMapPosition()
-		var soldier = EnemyInstancer.instance()
+		var soldier = null
+		if team == IDS.UserTeam:
+			soldier = SoldierInstancer.instance()
+			UserSoldiers.append(soldier)
+			pass
+		elif team == IDS.EnemyTeam:
+			EnemySoldiers.append(soldiers)
+			soldier = EnemyInstancer.instance()
+			pass
 		soldier.SetGameMap(GameMap)
-		soldier.SetGameParameters(blocks_size,offset_positions,self)
-		soldier.position = pos * blocks_size + offset_positions
+		soldier.SetGameParameters(BLOCKS_SIZE,OFFSET_POSITION,self)
+		soldier.position = pos * BLOCKS_SIZE + OFFSET_POSITION
+		# this lines are temporaly
 		pos = GetFreeMapPosition()
-		soldier.SetTargetPosition(pos * blocks_size + offset_positions)
+		soldier.SetTargetPosition(pos * BLOCKS_SIZE + OFFSET_POSITION)
+		# ends
 		soldiers.append(soldier)
 		var bussy_cells_soldier = soldier.GetBussyCells()
 		GameMap.SetBussyCells(bussy_cells_soldier)
@@ -40,15 +112,25 @@ func GenerateSoldiers(max_soldiers: int,blocks_size: int,offset_positions: Vecto
 	GameMap.FreeBussyCells(bussy_cells)
 	return soldiers
 
-func GenerateCommander(blocks_size:int,offset_positions:Vector2,CommandInstancer):
+func GenerateCommander(team:String):
 	var bussy_cells := []
 	var pos = GetFreeMapPosition()
-	var commander = CommandInstancer.instance()
+	var commander = null
+	if team == IDS.UserTeam:
+		commander = UserCommanderInstancer.instance()
+		UserCommander = commander
+		pass
+	elif team == IDS.EnemyTeam:
+		commander = EnemyCommanderInstancer.instance()
+		EnemyCommander = commander
+		pass
 	commander.SetGameMap(GameMap)
-	commander.SetGameParameters(blocks_size,offset_positions,self)
-	commander.position = pos * blocks_size + offset_positions
+	commander.SetGameParameters(BLOCKS_SIZE,OFFSET_POSITION,self)
+	commander.position = pos * BLOCKS_SIZE + OFFSET_POSITION
+	# this lines are temporaly
 	pos = GetFreeMapPosition()
-	commander.SetTargetPosition(pos * blocks_size + offset_positions)
+	commander.SetTargetPosition(pos * BLOCKS_SIZE + OFFSET_POSITION)
+	# ends
 	return commander
 
 func VisionCollide(from:Vector2,to:Vector2) -> bool:

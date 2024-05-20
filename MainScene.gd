@@ -12,11 +12,12 @@ var WIDTH = 0
 var HEIGHT = 0
 var ROW_SECTORS = 10
 var COLUMN_SECTORS = 10
-var SECTORS_DIMENTIONS = 30
+var SECTORS_DIMENTIONS = 10
 var BLOCK_SIZE = 30
 var OFFSET_POSITION = Vector2(15,15)
-var MAX_SOLDIERS = 5
+var MAX_SOLDIERS = 9
 var VisionRange = 300
+var PerceptionLatency = 25
 var Player = null
 var BackGround = null
 var UserSoldiers = []
@@ -38,34 +39,45 @@ func AddBullet(bullet) -> void:
 	pass
 
 func GenerateSoldiers():
-	EnemySoldiers += game_engine.GenerateSoldiers(MAX_SOLDIERS,BLOCK_SIZE,OFFSET_POSITION,enemyInstancer)
-	UserSoldiers += game_engine.GenerateSoldiers(MAX_SOLDIERS,BLOCK_SIZE,OFFSET_POSITION,soldiersInstancer)
+	EnemySoldiers += game_engine.GenerateSoldiers(IDS.EnemyTeam)
+	UserSoldiers += game_engine.GenerateSoldiers(IDS.UserTeam)
 	for soldier in EnemySoldiers:
 		add_child(soldier)
 		soldier.SetMapLimits(GetMapLimits())
+		soldier.SetPerceptionLatency(PerceptionLatency)
 		soldier.AutoSetVisionRange()
 		soldier.SetVisionRange(VisionRange)
 		pass
 	for soldier in UserSoldiers:
 		add_child(soldier)
 		soldier.SetMapLimits(GetMapLimits())
+		soldier.SetPerceptionLatency(PerceptionLatency)
 		soldier.AutoSetVisionRange()
 		soldier.SetVisionRange(VisionRange)
 		pass
-	UserCommander = game_engine.GenerateCommander(BLOCK_SIZE,OFFSET_POSITION,userCommanderInstancer)
+	UserCommander = game_engine.GenerateCommander(IDS.UserTeam)
 	add_child(UserCommander)
 	UserCommander.SetMapLimits(GetMapLimits())
+	UserCommander.SetPerceptionLatency(PerceptionLatency)
 	UserCommander.AutoSetVisionRange()
 	UserCommander.SetVisionRange(VisionRange)
 	pass
 
 func GetMapLimits():
-	var x = COLUMN_SECTORS * SECTORS_DIMENTIONS
-	var y = ROW_SECTORS * SECTORS_DIMENTIONS
-	return Vector2(x,y) * BLOCK_SIZE
+	return game_engine.GetMapLimits()
 
 func _ready():
+	# setting up the game_engine
 	game_engine.SetMapParameters(BLOCK_SIZE,OFFSET_POSITION)
+	game_engine.SetEnemyInstancer(enemyInstancer)
+	game_engine.SetSoldierInstancer(soldiersInstancer)
+	game_engine.SetMaxSoldiers(MAX_SOLDIERS)
+	game_engine.SetColumnSectors(COLUMN_SECTORS)
+	game_engine.SetRowSectors(ROW_SECTORS)
+	game_engine.SetSectorsDimentions(SECTORS_DIMENTIONS)
+	game_engine.SetPerceptionLatency(PerceptionLatency)
+	game_engine.SetVisionRange(VisionRange)
+	game_engine.SetUserCommanderInstancer(userCommanderInstancer)
 	BackGround = backgroundInstancer.instance()
 	add_child(BackGround)
 	DrawMap()

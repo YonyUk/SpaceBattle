@@ -24,6 +24,8 @@ var ShipsCollision = true
 var BLOCKS_SIZE = 1
 var OFFSET_POSITION = Vector2()
 var VISION_SCALE = 300
+var PerceptionLatency = 1
+var PerceptionRate = 0
 
 # Control variables
 var selfFlagPosition = Vector2()
@@ -108,6 +110,10 @@ func GetEnemysSeen() -> Array:
 func CanSeeToTarget(target) -> bool:
 	return not GAME_ENGINE.VisionCollide(global_position,target.global_position)
 # here ends the changes #################
+
+func SetPerceptionLatency(latency:int = 1) -> void:
+	PerceptionLatency = latency
+	pass
 
 func SetGameParameters(blocks_size:int,offset_position: Vector2,game_engine) -> void:
 	BLOCKS_SIZE = blocks_size
@@ -227,8 +233,12 @@ func GetBussyCells():
 	return result
 
 func _physics_process(delta):
-	See()
-	GetCurrentState()
+	if PerceptionRate == PerceptionLatency:
+		See()
+		GetCurrentState()
+		PerceptionRate = 0
+		pass
+	PerceptionRate += 1
 	MakeActions()
 	pass
 

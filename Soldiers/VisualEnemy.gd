@@ -22,6 +22,8 @@ var ShipsCollision = true
 var BLOCKS_SIZE = 1
 var OFFSET_POSITION = Vector2()
 var VISION_SCALE = 300
+var PerceptionLatency = 1
+var PerceptionRate = 0
 
 ## New changes
 
@@ -29,6 +31,10 @@ func SetMapLimits(size:Vector2) -> void:
 	pass
 
 ## Here ends the changes
+
+func SetPerceptionLatency(latency: int = 1) -> void:
+	PerceptionLatency = latency
+	pass
 
 func SetGameParameters(blocks_size:int,offset_position: Vector2,game_engine) -> void:
 	BLOCKS_SIZE = blocks_size
