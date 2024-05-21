@@ -6,6 +6,7 @@ onready var backgroundInstancer = preload("res://background/BackGround.tscn")
 onready var enemyInstancer = preload("res://Soldiers/VisualEnemy.tscn")
 onready var soldiersInstancer = preload("res://Soldiers/VisualSoldier.tscn")
 onready var userCommanderInstancer = preload("res://Soldiers/Command/VisualComander.tscn")
+onready var FlagInstancer = preload("res://Flags/Flag.tscn")
 
 var game_engine = GameEngine.new()
 var WIDTH = 0
@@ -15,7 +16,7 @@ var COLUMN_SECTORS = 10
 var SECTORS_DIMENTIONS = 10
 var BLOCK_SIZE = 30
 var OFFSET_POSITION = Vector2(15,15)
-var MAX_SOLDIERS = 9
+var MAX_SOLDIERS = 0
 var VisionRange = 300
 var PerceptionLatency = 25
 var Player = null
@@ -66,6 +67,20 @@ func GenerateSoldiers():
 func GetMapLimits():
 	return game_engine.GetMapLimits()
 
+func SetPlayer() -> void:
+	Player = playerInstancer.instance()
+	add_child(Player)
+	Player.SetGameParameters(BLOCK_SIZE,OFFSET_POSITION,CurrentMap())
+	Player.SetViewLimits(GetMapLimits())
+	var pos = game_engine.GetFreeMapPosition()
+	Player.global_position = pos * BLOCK_SIZE + OFFSET_POSITION
+	pass
+
+func SetFlags() -> void:
+	add_child(game_engine.SetFlag(IDS.UserTeam))
+	add_child(game_engine.SetFlag(IDS.EnemyTeam))
+	pass
+
 func _ready():
 	# setting up the game_engine
 	game_engine.SetMapParameters(BLOCK_SIZE,OFFSET_POSITION)
@@ -78,16 +93,13 @@ func _ready():
 	game_engine.SetPerceptionLatency(PerceptionLatency)
 	game_engine.SetVisionRange(VisionRange)
 	game_engine.SetUserCommanderInstancer(userCommanderInstancer)
+	game_engine.SetFlagInstancer(FlagInstancer)
 	BackGround = backgroundInstancer.instance()
 	add_child(BackGround)
 	DrawMap()
 	GenerateSoldiers()
-	Player = playerInstancer.instance()
-	add_child(Player)
-	Player.SetGameParameters(BLOCK_SIZE,OFFSET_POSITION,CurrentMap())
-	Player.SetViewLimits(GetMapLimits())
-	var pos = game_engine.GetFreeMapPosition()
-	Player.global_position = pos * BLOCK_SIZE + OFFSET_POSITION
+	SetPlayer()
+	SetFlags()
 	pass
 
 func _physics_process(delta):

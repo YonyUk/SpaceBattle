@@ -17,6 +17,7 @@ var VisionRange = 300
 var PerceptionLatency = 25
 var UserSoldiers = []
 var EnemySoldiers = []
+var FlagInstancer = null
 var UserCommanderInstancer = null
 var EnemyCommanderInstancer = null
 var UserCommander = null
@@ -27,6 +28,39 @@ func SetMapParameters(blocks_size: int,offset_position: Vector2) -> void:
 	BLOCKS_SIZE = blocks_size
 	OFFSET_POSITION = offset_position
 	pass
+
+func SetFlagInstancer(instancer) -> void:
+	FlagInstancer = instancer
+	pass
+
+func SetFlagPosition(team) -> Vector2:
+	var x_limit_up = 0
+	var x_limit_down = 0
+	if team == IDS.UserTeam:
+		x_limit_up = int(GameMap.XSize() / 4)
+		x_limit_down = 0
+		pass
+	elif team == IDS.EnemyTeam:
+		x_limit_up = GameMap.XSize()
+		x_limit_down = int(GameMap.XSize() / 4) * 3
+		pass
+	var x_pos = int(rand_range(x_limit_down,x_limit_up))
+	var y = int(rand_range(0,GameMap.YSize()))
+	var pos = GameMap.GetFreeCellCloserTo(Vector2(x_pos,y))
+	return pos * BLOCKS_SIZE
+
+func SetFlag(team):
+	var flag = null
+	flag = FlagInstancer.instance()
+	flag.SetTeam(team)
+	if team == IDS.UserTeam:
+		flag.SetFlagItem(IDS.BlueFlag)
+		pass
+	elif team == IDS.EnemyTeam:
+		flag.SetFlagItem(IDS.RedFlag)
+		pass
+	flag.position = SetFlagPosition(team)
+	return flag
 
 func GetMapLimits():
 	var x = COLUMN_SECTORS * SECTORS_DIMENTIONS

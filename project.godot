@@ -20,9 +20,24 @@ _global_script_classes=[ {
 "path": "res://Logic/Utils/AreasIDS.gd"
 }, {
 "base": "Node",
+"class": "CommanderBrain",
+"language": "GDScript",
+"path": "res://Soldiers/Command/CommanderBrain.gd"
+}, {
+"base": "Area2D",
+"class": "Flag",
+"language": "GDScript",
+"path": "res://Flags/Flag.gd"
+}, {
+"base": "Node",
 "class": "GameEngine",
 "language": "GDScript",
 "path": "res://Logic/GameEngine.gd"
+}, {
+"base": "Node",
+"class": "GameState",
+"language": "GDScript",
+"path": "res://Logic/GameState.gd"
 }, {
 "base": "Node",
 "class": "HeapMin",
@@ -77,7 +92,10 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "AgentState": "",
 "AreasIDS": "",
+"CommanderBrain": "",
+"Flag": "",
 "GameEngine": "",
+"GameState": "",
 "HeapMin": "",
 "Map": "",
 "MapGenerator": "",
