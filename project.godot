@@ -79,6 +79,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Soldiers/SoldierItem.gd"
 }, {
+"base": "Node",
+"class": "Strategy",
+"language": "GDScript",
+"path": "res://Soldiers/Command/Strategy.gd"
+}, {
 "base": "Area2D",
 "class": "VisualEnemy",
 "language": "GDScript",
@@ -104,6 +109,7 @@ _global_script_class_icons={
 "SoldierAgentPerception": "",
 "SoldierCollisionDetector": "",
 "SoldierItem": "",
+"Strategy": "",
 "VisualEnemy": "",
 "VisualSoldier": ""
 }

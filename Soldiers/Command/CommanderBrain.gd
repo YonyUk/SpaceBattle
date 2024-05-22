@@ -35,6 +35,10 @@ func SetGameState(defenders: int,flag_position: Vector2,allys: Array,team: Strin
 	SetTeam(team)
 	pass
 
+func SetMinDistanceToTeam(distance: float) -> void:
+	MinDistanceToTeam = distance
+	pass
+
 func BrainReady() -> void:
 	InternalGameState.SetFlagLocation(SelfTeam,SelfFlagPosition)
 	InternalGameState.SetTeam(SelfTeam,Allys)
@@ -47,4 +51,10 @@ func CheckConstraints(team: String) -> bool:
 	DistanceAverageToFlagTeam = InternalGameState.DistanceAverageFromTeamToFlag(team,SelfTeam)
 	if DistanceAverageToFlagTeam - DistanceToSelfFlagAverage < 0:
 		return false
+	if InternalGameState.GetMinDistanceFromTeamTo(SelfTeam,team) < MinDistanceToTeam:
+		return false
 	return true
+
+func GetStrategy(state: GameState) -> Strategy:
+	var strategy = Strategy.new()
+	return strategy

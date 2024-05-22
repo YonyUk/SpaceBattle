@@ -4,6 +4,12 @@ class_name GameState
 
 var Teams = {}
 var FlagsLocations = {}
+var ParentState = null
+
+# sets the state before the current one
+func SetparentState(state: GameState) -> void:
+	ParentState = state
+	pass
 
 # sets the flag position for a team
 func SetFlagLocation(team: String, pos: Vector2) -> void:
