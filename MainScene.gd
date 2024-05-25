@@ -13,7 +13,7 @@ var WIDTH = 0
 var HEIGHT = 0
 var ROW_SECTORS = 10
 var COLUMN_SECTORS = 10
-var SECTORS_DIMENTIONS = 20
+var SECTORS_DIMENTIONS = 10
 var BLOCK_SIZE = 30
 var OFFSET_POSITION = Vector2(15,15)
 var MAX_SOLDIERS = 8
@@ -26,6 +26,8 @@ var EnemySoldiers = []
 var UserCommander = null
 var EnemyCommander = null
 var IDS = AreasIDS.new()
+var FlagsTeams = {}
+var UserDefensiveRatio = 500
 
 func CurrentMap() -> Map:
 	return game_engine.GameMap
@@ -56,7 +58,7 @@ func GenerateSoldiers():
 		soldier.AutoSetVisionRange()
 		soldier.SetVisionRange(VisionRange)
 		pass
-	UserCommander = game_engine.GenerateCommander(IDS.UserTeam)
+	UserCommander = game_engine.GenerateCommander(IDS.UserTeam,UserDefensiveRatio)
 	add_child(UserCommander)
 	UserCommander.SetMapLimits(GetMapLimits())
 	UserCommander.SetPerceptionLatency(PerceptionLatency)
@@ -77,9 +79,16 @@ func SetPlayer() -> void:
 	pass
 
 func SetFlags() -> void:
-	add_child(game_engine.SetFlag(IDS.UserTeam))
-	add_child(game_engine.SetFlag(IDS.EnemyTeam))
+	var user_flag = game_engine.SetFlag(IDS.UserTeam)
+	var enemy_flag = game_engine.SetFlag(IDS.EnemyTeam)
+	add_child(user_flag)
+	add_child(enemy_flag)
+	FlagsTeams[IDS.UserTeam] = Vector2(int(user_flag.global_position.x / BLOCK_SIZE),int(user_flag.global_position.y / BLOCK_SIZE))
+	FlagsTeams[IDS.EnemyTeam] = Vector2(int(enemy_flag.global_position.x / BLOCK_SIZE),int(enemy_flag.global_position.y / BLOCK_SIZE))	
 	pass
+
+func GetFlagPosition(team: String):
+	return FlagsTeams[team]
 
 func _ready():
 	# setting up the game_engine
@@ -97,9 +106,9 @@ func _ready():
 	BackGround = backgroundInstancer.instance()
 	add_child(BackGround)
 	DrawMap()
+	SetFlags()
 	GenerateSoldiers()
 	SetPlayer()
-	SetFlags()
 	pass
 
 func _physics_process(delta):

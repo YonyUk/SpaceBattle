@@ -60,6 +60,11 @@ _global_script_classes=[ {
 "path": "res://Soldiers/Predicates/Predicates.gd"
 }, {
 "base": "Node",
+"class": "ShipStates",
+"language": "GDScript",
+"path": "res://Logic/ShipsStates.gd"
+}, {
+"base": "Node",
 "class": "Soldier",
 "language": "GDScript",
 "path": "res://Soldiers/Soldier.gd"
@@ -80,9 +85,9 @@ _global_script_classes=[ {
 "path": "res://Soldiers/SoldierItem.gd"
 }, {
 "base": "Node",
-"class": "Strategy",
+"class": "StrategyHeapMin",
 "language": "GDScript",
-"path": "res://Soldiers/Command/Strategy.gd"
+"path": "res://Soldiers/Command/StrategyHEAP.gd"
 }, {
 "base": "Area2D",
 "class": "VisualEnemy",
@@ -105,11 +110,12 @@ _global_script_class_icons={
 "Map": "",
 "MapGenerator": "",
 "Predicates": "",
+"ShipStates": "",
 "Soldier": "",
 "SoldierAgentPerception": "",
 "SoldierCollisionDetector": "",
 "SoldierItem": "",
-"Strategy": "",
+"StrategyHeapMin": "",
 "VisualEnemy": "",
 "VisualSoldier": ""
 }

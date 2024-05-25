@@ -33,7 +33,22 @@ var Perception = SoldierAgentPerception.new()
 var Brain = Predicates.new()
 var EnemysSeen = []
 var Shooting = true
+var SectorsCount = 0
+var States = ShipStates.new()
 # Methods for the game
+
+func SetSectorsCount(count: int) -> void:
+	SectorsCount = count
+	pass
+
+func GetSoldierState() -> int:
+	if Perception.Defending():
+		return States.ShipStateDefend
+	if Perception.AutoDefending():
+		return States.ShipStateAutoDefend
+	if Perception.Attacking():
+		return States.ShipsStateAttacking
+	return States.ShipStateIdle
 
 func See() -> void:
 	Perception.SetLifePoints(Core.LifePoints)

@@ -23,6 +23,7 @@ var EnemyCommanderInstancer = null
 var UserCommander = null
 var EnemyCommander = null
 var IDS = AreasIDS.new()
+var SectorsCount = 0
 
 func SetMapParameters(blocks_size: int,offset_position: Vector2) -> void:
 	BLOCKS_SIZE = blocks_size
@@ -85,10 +86,22 @@ func SetPerceptionLatency(latency:int) -> void:
 
 func SetRowSectors(rows:int) -> void:
 	ROW_SECTORS = rows
+	if SectorsCount == 0:
+		SectorsCount = rows
+		pass
+	else:
+		SectorsCount = min(SectorsCount,rows)
+		pass
 	pass
 
 func SetColumnSectors(columns:int) -> void:
 	COLUMN_SECTORS = columns
+	if SectorsCount == 0:
+		SectorsCount = columns
+		pass
+	else:
+		SectorsCount = min(SectorsCount,columns)
+		pass
 	pass
 
 func SetSectorsDimentions(dimentions:int) -> void:
@@ -146,7 +159,7 @@ func GenerateSoldiers(team:String) -> Array:
 	GameMap.FreeBussyCells(bussy_cells)
 	return soldiers
 
-func GenerateCommander(team:String):
+func GenerateCommander(team:String,defensive_ratio: int):
 	var bussy_cells := []
 	var pos = GetFreeMapPosition()
 	var commander = null
@@ -161,6 +174,8 @@ func GenerateCommander(team:String):
 	commander.SetGameMap(GameMap)
 	commander.SetGameParameters(BLOCKS_SIZE,OFFSET_POSITION,self)
 	commander.position = pos * BLOCKS_SIZE + OFFSET_POSITION
+	commander.SetSectorsCount(SectorsCount)
+	commander.SetDefensiveRatio(defensive_ratio)
 	# this lines are temporaly
 	pos = GetFreeMapPosition()
 	commander.SetTargetPosition(pos * BLOCKS_SIZE + OFFSET_POSITION)

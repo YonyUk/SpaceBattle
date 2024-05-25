@@ -6,10 +6,24 @@ onready var CenterShooter = $CenterShooter
 
 var Subordinades = []
 var TotalEnemysSeen = []
+var StrategyBrain = CommanderBrain.new()
+var DefensiveRatio = 500
 
 func _ready():
 	soldierItem = $CommandItem
 	Subordinades = get_tree().current_scene.GetSubordinades(TEAM)
+	selfFlagPosition = get_tree().current_scene.GetFlagPosition(TEAM)
+	StrategyBrain.SetDefensiveRatio(DefensiveRatio)
+	StrategyBrain.SetBlocksSize(BLOCKS_SIZE)
+	StrategyBrain.SetGameMap(GameMap)
+	StrategyBrain.SetSectorsCount(SectorsCount)
+	StrategyBrain.BuildMapSectors()
+	StrategyBrain.SetGameState(5,selfFlagPosition,Subordinades,TEAM)
+	var enemys = get_tree().current_scene.GetSubordinades(IDS.EnemyTeam)
+	var enemy_flag_position = get_tree().current_scene.GetFlagPosition(IDS.EnemyTeam)
+	StrategyBrain.SetEnemys(IDS.EnemyTeam,enemys)
+	StrategyBrain.SetEnemyFlagPosition(IDS.EnemyTeam,enemy_flag_position)
+	StrategyBrain.GetStrategy(IDS.EnemyTeam)
 	pass
 
 func Shoot() -> void:
@@ -23,6 +37,10 @@ func Shoot() -> void:
 	get_tree().current_scene.AddBullet(leftBullet)
 	get_tree().current_scene.AddBullet(rightBullet)
 	get_tree().current_scene.AddBullet(centerBullet)
+	pass
+
+func SetDefensiveRatio(ratio: int) -> void:
+	DefensiveRatio = ratio
 	pass
 
 func SetMapLimits(size:Vector2) -> void:

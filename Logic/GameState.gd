@@ -4,12 +4,29 @@ class_name GameState
 
 var Teams = {}
 var FlagsLocations = {}
-var ParentState = null
+var States = ShipStates.new()
+var ShipsStateAttacking = States.ShipsStateAttacking
+var ShipStateDefend = States.ShipStateDefend
+var ShipStateAutoDefend = States.ShipStateAutoDefend
 
-# sets the state before the current one
-func SetparentState(state: GameState) -> void:
-	ParentState = state
+var ShipsPositionsAssigned = {
+	
+}
+
+var ShipsStateAssigned = {
+	
+}
+
+func AssignPositionToShip(ship,pos: Vector2) -> void:
+	ShipsPositionsAssigned[ship] = pos
 	pass
+
+func AssignShipState(ship,state: int) -> void:
+	ShipsStateAssigned[ship] = state
+	pass
+
+func EqualTo(other: GameState) -> bool:
+	return other.ShipsPositionsAssigned == ShipsPositionsAssigned and other.ShipsStateAssigned == ShipsStateAssigned
 
 # sets the flag position for a team
 func SetFlagLocation(team: String, pos: Vector2) -> void:
@@ -20,8 +37,8 @@ func SetFlagLocation(team: String, pos: Vector2) -> void:
 
 # sets the team and its ships
 func SetTeam(team: String, ships: Array) -> void:
-	if not team in  Teams.keys():
-		Teams[team] == ships
+	if not team in Teams.keys():
+		Teams[team] = ships
 		pass
 	pass
 
