@@ -23,7 +23,7 @@ func _ready():
 	var enemy_flag_position = get_tree().current_scene.GetFlagPosition(IDS.EnemyTeam)
 	StrategyBrain.SetEnemys(IDS.EnemyTeam,enemys)
 	StrategyBrain.SetEnemyFlagPosition(IDS.EnemyTeam,enemy_flag_position)
-	StrategyBrain.GetStrategy(IDS.EnemyTeam)
+#	StrategyBrain.GetStrategy(IDS.EnemyTeam)
 	pass
 
 func Shoot() -> void:
