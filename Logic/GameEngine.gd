@@ -87,20 +87,20 @@ func SetPerceptionLatency(latency:int) -> void:
 func SetRowSectors(rows:int) -> void:
 	ROW_SECTORS = rows
 	if SectorsCount == 0:
-		SectorsCount = rows
+		SectorsCount = rows * rows
 		pass
 	else:
-		SectorsCount = min(SectorsCount,rows)
+		SectorsCount = min(SectorsCount,rows * rows)
 		pass
 	pass
 
 func SetColumnSectors(columns:int) -> void:
 	COLUMN_SECTORS = columns
 	if SectorsCount == 0:
-		SectorsCount = columns
+		SectorsCount = columns * columns
 		pass
 	else:
-		SectorsCount = min(SectorsCount,columns)
+		SectorsCount = min(SectorsCount,columns * columns)
 		pass
 	pass
 

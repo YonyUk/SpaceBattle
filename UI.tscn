@@ -5,6 +5,7 @@
 [sub_resource type="GradientTexture2D" id=1]
 
 [sub_resource type="CircleShape2D" id=5]
+radius = 36.71
 
 [sub_resource type="GradientTexture2D" id=2]
 
@@ -64,10 +65,3 @@ margin_bottom = 36.0
 text = "Right"
 
 [connection signal="pressed" from="UpButton" to="." method="_on_UpButton_pressed"]
-[connection signal="released" from="UpButton" to="." method="_on_UpButton_released"]
-[connection signal="pressed" from="DownButton" to="." method="_on_DownButton_pressed"]
-[connection signal="released" from="DownButton" to="." method="_on_DownButton_released"]
-[connection signal="pressed" from="LeftButton" to="." method="_on_LeftButton_pressed"]
-[connection signal="released" from="LeftButton" to="." method="_on_LeftButton_released"]
-[connection signal="pressed" from="RightButton" to="." method="_on_RightButton_pressed"]
-[connection signal="released" from="RightButton" to="." method="_on_RightButton_released"]

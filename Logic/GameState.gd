@@ -60,6 +60,20 @@ func DistanceAverageFromTeamToFlag(self_team: String,other_team: String) -> floa
 		pass
 	return distance / Teams[self_team].size()
 
+# return the min distance from one team to the flag of the other_team
+func MinDistanceFromTeamToFlagTeam(team:String,other_team:String) -> float:
+	var distance = 0
+	for soldier in Teams[team]:
+		var vector_distance: Vector2 = soldier.global_position - FlagsLocations[other_team]
+		if distance == 0:
+			distance = vector_distance.length_squared()
+			pass
+		else:
+			distance = min(distance,vector_distance.length_squared())
+			pass
+		pass
+	return distance
+
 # the numbers of ships defending the flag of a given team
 func GetFlagDefenders(team: String,defensive_perimeter: int) -> int:
 	var defenders = 0

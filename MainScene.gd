@@ -15,10 +15,11 @@ var ROW_SECTORS = 10
 var COLUMN_SECTORS = 10
 var SECTORS_DIMENTIONS = 10
 var BLOCK_SIZE = 30
-var OFFSET_POSITION = Vector2(15,15)
-var MAX_SOLDIERS = 10
+var OFFSET_POSITION = Vector2(BLOCK_SIZE / 2,BLOCK_SIZE / 2)
+var MAX_SOLDIERS = 8
 var VisionRange = 300
-var PerceptionLatency = 25
+var PerceptionLatency = 10
+var CommanderLatency = 1800
 var Player = null
 var BackGround = null
 var UserSoldiers = []
@@ -64,6 +65,7 @@ func GenerateSoldiers():
 	UserCommander.SetPerceptionLatency(PerceptionLatency)
 	UserCommander.AutoSetVisionRange()
 	UserCommander.SetVisionRange(VisionRange)
+	UserCommander.SetReasoningLatency(CommanderLatency)
 	pass
 
 func GetMapLimits():
@@ -119,12 +121,12 @@ func _physics_process(delta):
 			soldier.SetTargetPosition(new_pos * BLOCK_SIZE + OFFSET_POSITION)
 			pass
 		pass
-	for soldier in UserSoldiers:
-		if soldier.OnPosition:
-			var new_pos = game_engine.GetFreeMapPosition()
-			soldier.SetTargetPosition(new_pos * BLOCK_SIZE + OFFSET_POSITION)
-			pass
-		pass
+#	for soldier in UserSoldiers:
+#		if soldier.OnPosition:
+#			var new_pos = game_engine.GetFreeMapPosition()
+#			soldier.SetTargetPosition(new_pos * BLOCK_SIZE + OFFSET_POSITION)
+#			pass
+#		pass
 	if UserCommander.OnPosition:
 		var new_pos = game_engine.GetFreeMapPosition()
 		UserCommander.SetTargetPosition(new_pos * BLOCK_SIZE + OFFSET_POSITION)
@@ -141,6 +143,7 @@ func DrawMap():
 			if not game_engine.GameMap.map[j][i]:
 				var block = blockInstancer.instance()
 				block.position = pos
+				block.scale = Vector2.ONE * (BLOCK_SIZE / 30)
 				add_child(block)
 				pass
 			pass

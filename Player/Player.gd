@@ -16,6 +16,7 @@ var ID = 'PLAYER'
 var TEAM = "USER"
 var LastPosition = Vector2()
 var LastRotation = 0
+var OperatingSystem = null
 
 func _ready():
 	LastPosition = global_position

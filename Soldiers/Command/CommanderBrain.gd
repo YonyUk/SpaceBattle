@@ -2,7 +2,7 @@ extends Node
 
 class_name CommanderBrain
 
-var HEAP = StrategyHeapMin.new()
+var HEAPS = {}
 var InternalGameState = GameState.new()
 var SelfFlagPosition = Vector2()
 var SelfTeam = ''
@@ -15,10 +15,12 @@ var MinDistanceToTeam = 0
 var GameMap: Map = null
 var MapSectors := []
 var BlocksSize := 0
+var OffsetPosition := Vector2()
 var LastsShipsOrdered := []
 var SectorsCount = 0
 var MaxShipsToOrder = 0
 var DefensiveRatio = 0
+var States = ShipStates.new()
 
 func SetSectorsCount(count: int) -> void:
 	SectorsCount = count
@@ -30,6 +32,10 @@ func SetEnemyFlagPosition(team: String,pos: Vector2) -> void:
 
 func SetBlocksSize(size: float) -> void:
 	BlocksSize = size
+	pass
+
+func SetOffsetPosition(offset: Vector2) -> void:
+	OffsetPosition = offset
 	pass
 
 func SetCurrentDefenders(defenders: int) -> void:
@@ -84,8 +90,8 @@ func BrainReady() -> void:
 
 func CheckConstraints(team: String) -> bool:
 	CurrentDefendersCount = 0
-	for ship in Allys:
-		var vector_distance: Vector2 = ship.global_position - SelfFlagPosition
+	for ship in InternalGameState.ShipsPositionsAssigned.keys():
+		var vector_distance: Vector2 = InternalGameState.ShipsPositionsAssigned[ship] - SelfFlagPosition * BlocksSize + OffsetPosition
 		var distance = vector_distance.length_squared()
 		if sqrt(distance) < DefensiveRatio:
 			CurrentDefendersCount += 1
@@ -95,9 +101,11 @@ func CheckConstraints(team: String) -> bool:
 		return false
 	DistanceToSelfFlagAverage = InternalGameState.DistanceAverageToSelfFlag(SelfTeam)
 	DistanceAverageToFlagTeam = InternalGameState.DistanceAverageFromTeamToFlag(team,SelfTeam)
-	if DistanceAverageToFlagTeam - DistanceToSelfFlagAverage < 0:
+	if DistanceToSelfFlagAverage - DistanceAverageToFlagTeam < 0:
 		return false
 	if InternalGameState.GetMinDistanceFromTeamTo(SelfTeam,team) < MinDistanceToTeam:
+		return false
+	if InternalGameState.MinDistanceFromTeamToFlagTeam(team,SelfTeam) < DistanceToSelfFlagAverage:
 		return false
 	return true
 
@@ -105,11 +113,17 @@ func BuildMapSectors() -> void:
 	var MapArea = GameMap.XSize() * GameMap.YSize()
 	var sectors_area = MapArea / SectorsCount
 	var sectors_dimentions = int(sqrt(sectors_area))
+	if DefensiveRatio < sectors_dimentions * BlocksSize:
+		DefensiveRatio = sectors_dimentions * 2 * BlocksSize
+		pass  
 	for i in range(0,GameMap.XSize(),sectors_dimentions):
 		for j in range(0,GameMap.YSize(),sectors_dimentions):
-			MapSectors.append(Vector2(i,j))
+			var sector = Vector2(i,j) + Vector2(sectors_dimentions / 2,sectors_dimentions / 2)
+			sector = GameMap.GetFreeCellCloserTo(sector)
+			MapSectors.append(sector)
 			pass
 		pass
+	MapSectors.append(SelfFlagPosition)
 	GetMaxShipsToOrder()
 	pass
 
@@ -126,23 +140,52 @@ func GetMaxShipsToOrder() -> void:
 		pass
 	pass
 
-# AStar to find the best strategy
-func GetStrategy(enemy_team: String) -> GameState:
-	if LastsShipsOrdered.size() == Allys.size():
-		LastsShipsOrdered.clear()
+func TransitionFunctionCost(state:GameState) -> float:
+	var result = 0
+	for ship in state.ShipsPositionsAssigned.keys():
+		result += (ship.global_position - state.ShipsPositionsAssigned[ship]).length_squared()
 		pass
+	return result
+
+# build the priority queue for the posibilities of one ship
+func BuildStatesShips(ship) -> StrategyHeapMin:
+	var result = StrategyHeapMin.new()
+	for sector in MapSectors:
+		var state = GameState.new()
+		for ship_ally in Allys:
+			if not ship_ally == ship:
+				state.AssignPositionToShip(ship_ally,ship_ally.global_position)
+				pass
+			pass
+		state.AssignPositionToShip(ship,sector)
+		var cost = TransitionFunctionCost(state)
+		result.Push(state,cost)
+		pass
+	return result
+
+# AStar for the strategy
+func GetStrategy(team:String) -> GameState:
 	for ship in Allys:
-		var discrete_position = Vector2(int(ship.global_position.x / BlocksSize),int(ship.global_position.y / BlocksSize))
-		InternalGameState.AssignPositionToShip(ship,discrete_position)
-		InternalGameState.AssignShipState(ship,ship.GetSoldierState())
+		InternalGameState.AssignPositionToShip(ship,ship.global_position)
+		HEAPS[ship] = BuildStatesShips(ship)
 		pass
-	var ships_taken := []
-	HEAP.Clear()
-	HEAP.Push(InternalGameState,0)
-	var self_flag_distance_average = InternalGameState.DistanceAverageToSelfFlag(SelfTeam)
-	var other_flag_distance_average = InternalGameState.DistanceAverageFromTeamToFlag(SelfTeam,enemy_team)
-	# searching the strategy
-	while not CheckConstraints(SelfTeam) and HEAP.Count() > 0 and ships_taken.size() < MaxShipsToOrder:
-		# TODO
+	while not CheckConstraints(SelfTeam):
+		var heap_min = null
+		var ship_moved = null
+		var cost = pow(10,10)
+		var exists_transition = false
+		for heap in HEAPS.keys():
+			if HEAPS[heap].Count() > 0 and HEAPS[heap].Peek()[0] < cost:
+				exists_transition = true
+				heap_min = HEAPS[heap]
+				cost = HEAPS[heap].Peek()[0]
+				ship_moved = heap
+				pass
+			pass
+		if not exists_transition:
+			break
+		var state = heap_min.Pop()
+		InternalGameState.AssignPositionToShip(ship_moved,state.ShipsPositionsAssigned[ship_moved])
+		cost = TransitionFunctionCost(InternalGameState)
 		pass
 	return InternalGameState

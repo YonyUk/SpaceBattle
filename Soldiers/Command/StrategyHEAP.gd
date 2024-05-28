@@ -70,3 +70,6 @@ func Clear() -> void:
 
 func Count() -> int:
 	return HEAP.size()
+
+func Peek():
+	return HEAP[0]

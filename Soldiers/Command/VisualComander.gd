@@ -8,22 +8,26 @@ var Subordinades = []
 var TotalEnemysSeen = []
 var StrategyBrain = CommanderBrain.new()
 var DefensiveRatio = 500
+var ReasoningLatency = 10
+var ReasoningTimer = 0
 
 func _ready():
 	soldierItem = $CommandItem
+	Speed = Speed / 2 
 	Subordinades = get_tree().current_scene.GetSubordinades(TEAM)
+	Subordinades.append(self)
 	selfFlagPosition = get_tree().current_scene.GetFlagPosition(TEAM)
 	StrategyBrain.SetDefensiveRatio(DefensiveRatio)
 	StrategyBrain.SetBlocksSize(BLOCKS_SIZE)
+	StrategyBrain.SetOffsetPosition(OFFSET_POSITION)
 	StrategyBrain.SetGameMap(GameMap)
 	StrategyBrain.SetSectorsCount(SectorsCount)
-	StrategyBrain.BuildMapSectors()
 	StrategyBrain.SetGameState(5,selfFlagPosition,Subordinades,TEAM)
+	StrategyBrain.BuildMapSectors()
 	var enemys = get_tree().current_scene.GetSubordinades(IDS.EnemyTeam)
 	var enemy_flag_position = get_tree().current_scene.GetFlagPosition(IDS.EnemyTeam)
 	StrategyBrain.SetEnemys(IDS.EnemyTeam,enemys)
 	StrategyBrain.SetEnemyFlagPosition(IDS.EnemyTeam,enemy_flag_position)
-#	StrategyBrain.GetStrategy(IDS.EnemyTeam)
 	pass
 
 func Shoot() -> void:
@@ -39,6 +43,10 @@ func Shoot() -> void:
 	get_tree().current_scene.AddBullet(centerBullet)
 	pass
 
+func SetReasoningLatency(latency: int) -> void:
+	ReasoningLatency = latency
+	pass
+
 func SetDefensiveRatio(ratio: int) -> void:
 	DefensiveRatio = ratio
 	pass
@@ -47,6 +55,18 @@ func SetMapLimits(size:Vector2) -> void:
 	LeftShooter.SetMapLimits(size)
 	RightShooter.SetMapLimits(size)
 	CenterShooter.SetMapLimits(size)
+	pass
+
+func _physics_process(delta):
+	._physics_process(delta)
+	if ReasoningTimer == ReasoningLatency:
+		var strategy = StrategyBrain.GetStrategy(IDS.EnemyTeam)
+		for ship in strategy.ShipsPositionsAssigned.keys():
+			ship.SetTargetPosition(strategy.ShipsPositionsAssigned[ship] * BLOCKS_SIZE + OFFSET_POSITION)
+			pass
+		ReasoningTimer = 0
+		pass
+	ReasoningTimer += 1
 	pass
 
 func _on_VisualComander_body_entered(body):
