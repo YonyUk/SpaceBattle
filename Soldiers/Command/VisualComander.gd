@@ -25,9 +25,7 @@ func _ready():
 	StrategyBrain.SetGameState(5,selfFlagPosition,Subordinades,TEAM)
 	StrategyBrain.BuildMapSectors()
 	var enemys = get_tree().current_scene.GetSubordinades(IDS.EnemyTeam)
-	var enemy_flag_position = get_tree().current_scene.GetFlagPosition(IDS.EnemyTeam)
 	StrategyBrain.SetEnemys(IDS.EnemyTeam,enemys)
-	StrategyBrain.SetEnemyFlagPosition(IDS.EnemyTeam,enemy_flag_position)
 	pass
 
 func Shoot() -> void:
@@ -60,9 +58,19 @@ func SetMapLimits(size:Vector2) -> void:
 func _physics_process(delta):
 	._physics_process(delta)
 	if ReasoningTimer == ReasoningLatency:
+		var enemys = []
+		for ally in Subordinades:
+			for ship in ally.EnemysSeen:
+				if not ship in enemys:
+					enemys.append(ship)
+					pass
+				pass
+			pass
+		StrategyBrain.SetEnemys(IDS.EnemyTeam,enemys)
 		var strategy = StrategyBrain.GetStrategy(IDS.EnemyTeam)
 		for ship in strategy.ShipsPositionsAssigned.keys():
 			ship.SetTargetPosition(strategy.ShipsPositionsAssigned[ship] * BLOCKS_SIZE + OFFSET_POSITION)
+			ship.SetSoldierState(strategy.ShipsStateAssigned[ship])
 			pass
 		ReasoningTimer = 0
 		pass

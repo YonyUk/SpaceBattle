@@ -96,6 +96,7 @@ func CheckConstraints(team: String) -> bool:
 		var distance = vector_distance.length_squared()
 		if sqrt(distance / 2) < DefensiveRatio:
 			CurrentDefendersCount += 1
+			InternalGameState.ShipsStateAssigned[ship] = States.ShipStateDefend
 			pass
 		pass
 	if CurrentDefendersCount - MinShipsDefenders < 0:
@@ -103,6 +104,10 @@ func CheckConstraints(team: String) -> bool:
 	DistanceToSelfFlagAverage = InternalGameState.DistanceAverageToSelfFlag(SelfTeam)
 	DistanceAverageToFlagTeam = InternalGameState.DistanceAverageFromTeamToFlag(team,SelfTeam)
 	if DistanceToSelfFlagAverage - DistanceAverageToFlagTeam < 0:
+		return false
+	var min_dis_to_self_flag = InternalGameState.MinDistanceFromTeamToFlagTeam(SelfTeam,SelfTeam)
+	var min_dis_from_other = InternalGameState.MinDistanceFromTeamToFlagTeam(team,SelfTeam)
+	if min_dis_from_other - min_dis_to_self_flag < 0:
 		return false
 	return true
 
@@ -167,6 +172,7 @@ func GetStrategy(team:String) -> GameState:
 	for ship in Allys:
 		var discrete_position = Vector2(int(ship.global_position.x / BlocksSize),int(ship.global_position.y / BlocksSize))
 		InternalGameState.AssignPositionToShip(ship,discrete_position)
+		InternalGameState.AssignShipState(ship,States.ShipStateIdle)
 		HEAPS[ship] = BuildStatesShips(ship)
 		pass
 	while not CheckConstraints(SelfTeam):

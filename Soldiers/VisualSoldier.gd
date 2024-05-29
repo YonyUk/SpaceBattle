@@ -37,6 +37,15 @@ var SectorsCount = 0
 var States = ShipStates.new()
 # Methods for the game
 
+func SetSoldierState(state: int) -> void:
+	if state == States.ShipStateDefend:
+		Perception.SetDefending(true)
+		pass
+	else:
+		Perception.SetDefending(false)
+		pass
+	pass
+
 func SetSectorsCount(count: int) -> void:
 	SectorsCount = count
 	pass
@@ -175,6 +184,7 @@ func RotateSoldierItem(vector: Vector2) -> void:
 	pass
 
 func MakeActions() -> void:
+	var a = GetSoldierState()
 	Perception.SetStateMoving(Core.StateMoving)
 	# Moving Actions
 	if Perception.Moving():
