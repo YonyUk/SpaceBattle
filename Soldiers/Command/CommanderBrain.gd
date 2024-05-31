@@ -94,9 +94,12 @@ func CheckConstraints(team: String) -> bool:
 	for ship in InternalGameState.ShipsPositionsAssigned.keys():
 		var vector_distance: Vector2 = InternalGameState.ShipsPositionsAssigned[ship] - SelfFlagPosition
 		var distance = vector_distance.length_squared()
-		if sqrt(distance / 2) < DefensiveRatio:
+		if sqrt(distance / 2) < DefensiveRatio / 2:
 			CurrentDefendersCount += 1
 			InternalGameState.ShipsStateAssigned[ship] = States.ShipStateDefend
+			pass
+		else:
+			InternalGameState.ShipsStateAssigned[ship] = States.ShipStateIdle
 			pass
 		pass
 	if CurrentDefendersCount - MinShipsDefenders < 0:
@@ -182,6 +185,8 @@ func GetStrategy(team:String) -> GameState:
 		var exists_transition = false
 		for heap in HEAPS.keys():
 			if HEAPS[heap].Count() > 0 and HEAPS[heap].Peek()[0] < cost:
+				if heap.GetSoldierState() == States.ShipStateDefend:
+					continue
 				exists_transition = true
 				heap_min = HEAPS[heap]
 				cost = HEAPS[heap].Peek()[0]
