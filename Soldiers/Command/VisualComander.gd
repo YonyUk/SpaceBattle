@@ -23,7 +23,7 @@ func _ready():
 	StrategyBrain.SetOffsetPosition(OFFSET_POSITION)
 	StrategyBrain.SetGameMap(GameMap)
 	StrategyBrain.SetSectorsCount(SectorsCount)
-	StrategyBrain.SetGameState(5,selfFlagPosition,Subordinades,TEAM)
+	StrategyBrain.SetGameState(int(Subordinades.size() / 3),selfFlagPosition,Subordinades,TEAM)
 	StrategyBrain.BuildMapSectors()
 	var enemys = get_tree().current_scene.GetSubordinades(IDS.EnemyTeam)
 	StrategyBrain.SetEnemys(IDS.EnemyTeam,enemys)
@@ -65,6 +65,10 @@ func SetMapLimits(size:Vector2) -> void:
 func _physics_process(delta):
 	._physics_process(delta)
 	if ReasoningTimer == ReasoningLatency:
+		StrategyBrain.SetMinDefenders(int(Subordinades.size() / 3))
+		StrategyBrain.SetMinSeekers(int(Subordinades.size() / 4))
+		Subordinades = get_tree().current_scene.GetSubordinades(TEAM)
+		StrategyBrain.SetAllys(Subordinades)
 		var enemys = []
 		for ally in Subordinades:
 			for ship in ally.EnemysSeen:

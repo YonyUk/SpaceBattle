@@ -62,6 +62,10 @@ func SetMinDefenders(defenders: int) -> void:
 	MinShipsDefenders = defenders
 	pass
 
+func SetMinSeekers(seekers: int) -> void:
+	MinShipsSeekerCount = seekers
+	pass
+
 func SetFlagPosition(pos: Vector2) -> void:
 	SelfFlagPosition = pos
 	pass
