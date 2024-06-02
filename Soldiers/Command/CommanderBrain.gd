@@ -101,6 +101,7 @@ func BrainReady() -> void:
 	pass
 
 func CheckDefendersConstraints() -> bool:
+	Defenders.clear()
 	CurrentDefendersCount = 0
 	for ship in InternalGameState.ShipsPositionsAssigned.keys():
 		var vector_distance: Vector2 = InternalGameState.ShipsPositionsAssigned[ship] - SelfFlagPosition
@@ -109,6 +110,7 @@ func CheckDefendersConstraints() -> bool:
 			CurrentDefendersCount += 1
 			ship.SetDefendingPosition(InternalGameState.ShipsPositionsAssigned[ship])
 			InternalGameState.AssignShipState(ship,States.ShipStateDefend)
+			Defenders.append(ship)
 			pass
 		else:
 			InternalGameState.ShipsStateAssigned[ship] = ship.GetSoldierState()
@@ -161,6 +163,7 @@ func ResolveAverageDistance(team: String) -> void:
 	pass
 
 func CheckShipsSeekerConstraint() -> bool:
+	Seekers.clear()
 	for ship in InternalGameState.ShipsPositionsAssigned.keys():
 		var vector_distance: Vector2 = InternalGameState.ShipsPositionsAssigned[ship] - PointObjetive
 		var distance = vector_distance.length_squared()
@@ -202,14 +205,10 @@ func ResolveDefendersConflicts() -> void:
 			if defenders_priority.Count() == 0 or sectors_priority.Length() == 0:
 				break
 			var ship = defenders_priority.Pop()
-			if InternalGameState.ShipsStateAssigned[ship] == States.ShipStateDefend or ship.GetSoldierState() == States.ShipStateDefend:
-				var discrete_position = Vector2(int(ship.global_position.x / BlocksSize),int(ship.global_position.y / BlocksSize))
-				InternalGameState.AssignPositionToShip(ship,discrete_position)
+			if not ship in Defenders:
 				Defenders.append(ship)
 				CurrentDefendersCount += 1
-				continue
-			Defenders.append(ship)
-			CurrentDefendersCount += 1
+				pass
 			InternalGameState.AssignPositionToShip(ship,sectors_priority.Pop())
 			InternalGameState.AssignShipState(ship,States.ShipStateDefend)
 			pass
@@ -224,15 +223,18 @@ func ResolveSeekersConflict() -> void:
 			if seekers_heap.Count() == 0 or objetive_heap.Length() == 0:
 				break
 			var ship = seekers_heap.Pop()
-			Seekers.append(ship)
-			InternalGameState.AssignPositionToShip(ship,objetive_heap.Pop())
-			InternalGameState.AssignShipState(ship,States.ShipStateIdle)
+			if not ship in Seekers:
+				Seekers.append(ship)
+				InternalGameState.AssignPositionToShip(ship,objetive_heap.Pop())
+				InternalGameState.AssignShipState(ship,States.ShipStateIdle)
+				pass
 			pass
 		pass
 	pass
 
 func SetSectorsPriority(pos:Vector2) -> HeapMin:
 	var heap = HeapMin.new()
+	heap.Push(pos,0)
 	for sector in MapSectors:
 		var vector_distance: Vector2 = sector - pos
 		var distance = vector_distance.length_squared()
@@ -304,8 +306,6 @@ func TransitionFunctionCost(state:GameState) -> float:
 
 # AStar for the strategy
 func GetStrategy(team:String) -> GameState:
-	Seekers.clear()
-	Defenders.clear()
 	for ship in Allys:
 		var discrete_position = Vector2(int(ship.global_position.x / BlocksSize), int(ship.global_position.y / BlocksSize))
 		InternalGameState.AssignPositionToShip(ship,discrete_position)

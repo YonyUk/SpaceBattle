@@ -192,6 +192,16 @@ func RotateSoldierItem(vector: Vector2) -> void:
 
 func MakeActions() -> void:
 	Perception.SetStateMoving(Core.StateMoving)
+	
+	#Offensive Actions
+	if Perception.Attacking():
+		var enemy = EnemySeen()[1]
+		SetAttackTarget(enemy)
+		pass
+	else:
+		SetAttackTarget(null)
+		pass
+	
 	# Moving Actions
 	if Perception.Moving():
 		Move()

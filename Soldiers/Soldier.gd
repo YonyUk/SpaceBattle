@@ -102,6 +102,8 @@ func GetTargetPosition() -> Vector2:
 	if PathToTargetPosition.size() > 0 and PathToTargetPosition[0]:
 		var result = PathToTargetPosition[0]
 		return result * BLOCKS_SIZE + OFFSET_POSITION
+	if TargetEnemy:
+		return TargetEnemy.global_position
 	return TargetPosition
 
 func NormalizeTargetPosition(pos:Vector2):

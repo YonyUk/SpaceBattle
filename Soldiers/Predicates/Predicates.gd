@@ -4,12 +4,13 @@ class_name Predicates
 # this class encapsules the reasoning procedure of an agent
 
 var DeductionRules = {
-	"AutoDefending":["LowLifePoints,!Attacking,!Defending","HasBeenShooted,HasNoSeenEnemys"],
+	"AutoDefending":["LowLifePoints,!Defending","HasBeenShooted,HasNoSeenEnemys"],
 	"Defending":["CloseTo,!Attacking"],
 	"Moving":["!OnPosition"],
 	"CanRotate":["See"],
 	"CanShoot":["See"],
-	"CanHide":["AutoDefending,!See"]
+	"CanHide":["AutoDefending,!See"],
+	"Attacking":["!AutoDefending,See"]
 }
 
 # gets the func references for all the functions named in the deduction rule
@@ -76,7 +77,8 @@ func CanHide(perception:SoldierAgentPerception) -> bool:
 	return EvalPredicates(perception,predicates)
 
 func Attacking(perception:SoldierAgentPerception) -> bool:
-	return perception.Attacking()
+	var predicates = GetFuncRerences(DeductionRules['Attacking'])
+	return EvalPredicates(perception,predicates)
 
 func LowLifePoints(perception:SoldierAgentPerception) -> bool:
 	return perception.LifePoints < perception.LowLimitLifePoints
