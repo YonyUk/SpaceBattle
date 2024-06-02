@@ -39,24 +39,24 @@ func _heap_down(index:int) -> void:
 		pass
 	pass
 
-func Push(strategy: GameState, weight: float) -> void:
+func Push(ship, weight: float) -> void:
 	var is_in = false
 	for move in HEAP:
-		if strategy.EqualTo(move[1]):
+		if ship == move[1]:
 			is_in = true
 			break
 		pass
 	if not is_in:
-		HEAP.append([weight,strategy])
+		HEAP.append([weight,ship])
 		_heap_up(HEAP.size() - 1)
 		pass
 	pass
 
-func Pop() -> GameState:
+func Pop():
 	var result = HEAP[0][1]
 	HEAP[0][0] = HEAP[HEAP.size() -1][0] + HEAP[HEAP.size() - 2][0]
 	_heap_down(0)
-	if HEAP[HEAP.size() - 1][1].EqualTo(result):
+	if HEAP[HEAP.size() - 1][1] == result:
 		HEAP.pop_at(HEAP.size() - 1)
 		pass
 	else:

@@ -6,6 +6,7 @@ var TargetPosition := Vector2()
 var TargetDestination = null
 var FlankPath = null
 var StateMoving = false
+var StateDefending = false
 var back = 0
 var backLeft = 1
 var left = 2
@@ -20,6 +21,16 @@ var LifePoints := 0
 var DefendingPosition = null
 var TargetEnemy = null
 var SelfFlagPosition := Vector2()
+var DefensivePerimeter = 10
+var GameMap = null
+
+func SetDefensivePerimeter(distance: int) -> void:
+	DefensivePerimeter = distance
+	pass
+
+func SetStateDefending(value: bool) -> void:
+	StateDefending = value
+	pass
 
 func SetFlagPosition(pos:Vector2) -> void:
 	SelfFlagPosition = pos

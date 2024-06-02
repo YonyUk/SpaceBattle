@@ -37,6 +37,10 @@ var SectorsCount = 0
 var States = ShipStates.new()
 # Methods for the game
 
+func SetDefensiveDistance(distance: float) -> void:
+	Perception.SetDefendingDistance(distance)
+	pass
+
 func SetSoldierState(state: int) -> void:
 	if state == States.ShipStateDefend:
 		Perception.SetDefending(true)
@@ -58,6 +62,9 @@ func GetSoldierState() -> int:
 	if Perception.Attacking():
 		return States.ShipsStateAttacking
 	return States.ShipStateIdle
+
+func GetDefendingPosition() -> Vector2:
+	return Core.DefendingPosition
 
 func See() -> void:
 	Perception.SetLifePoints(Core.LifePoints)
@@ -184,7 +191,6 @@ func RotateSoldierItem(vector: Vector2) -> void:
 	pass
 
 func MakeActions() -> void:
-	var a = GetSoldierState()
 	Perception.SetStateMoving(Core.StateMoving)
 	# Moving Actions
 	if Perception.Moving():
@@ -261,6 +267,7 @@ func _physics_process(delta):
 	if PerceptionRate == PerceptionLatency:
 		See()
 		GetCurrentState()
+		Core.SetStateDefending(Perception.Defending())
 		PerceptionRate = 0
 		pass
 	PerceptionRate += 1

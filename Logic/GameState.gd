@@ -46,6 +46,8 @@ func SetTeam(team: String, ships: Array) -> void:
 func DistanceAverageToSelfFlag(team: String) -> float:
 	var distance = 0
 	for soldier in Teams[team]:
+		if ShipsStateAssigned[soldier] == States.ShipStateSeeking:
+			continue
 		var vector: Vector2 = soldier.global_position - FlagsLocations[team]
 		distance += vector.length_squared()
 		pass

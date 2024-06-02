@@ -10,6 +10,7 @@ var StrategyBrain = CommanderBrain.new()
 var DefensiveRatio = 500
 var ReasoningLatency = 10
 var ReasoningTimer = 0
+var DefensivePerimeter = 5
 
 func _ready():
 	soldierItem = $CommandItem
@@ -26,6 +27,12 @@ func _ready():
 	StrategyBrain.BuildMapSectors()
 	var enemys = get_tree().current_scene.GetSubordinades(IDS.EnemyTeam)
 	StrategyBrain.SetEnemys(IDS.EnemyTeam,enemys)
+	var flag_enemy_position = get_tree().current_scene.GetFlagPosition(IDS.EnemyTeam)
+	StrategyBrain.SetObjetivePoint(flag_enemy_position)
+	pass
+
+func SetDefensivePerimeter(perimeter: int) -> void:
+	DefensivePerimeter = perimeter
 	pass
 
 func Shoot() -> void:
@@ -71,8 +78,34 @@ func _physics_process(delta):
 		for ship in strategy.ShipsPositionsAssigned.keys():
 			ship.SetTargetPosition(strategy.ShipsPositionsAssigned[ship] * BLOCKS_SIZE + OFFSET_POSITION)
 			ship.SetSoldierState(strategy.ShipsStateAssigned[ship])
+			ship.SetDefensiveDistance(DefensiveRatio)
 			pass
 		ReasoningTimer = 0
+		pass
+	else:
+		for ship in Subordinades:
+			var current_pos = ship.GetDefendingPosition()
+			if ship.OnPosition and current_pos:
+				var pos_to_defend = current_pos * BLOCKS_SIZE + OFFSET_POSITION
+				var x = 0
+				var y = 0
+				if ship.global_position.x > pos_to_defend.x:
+					x = current_pos.x - 5
+					pass
+				else:
+					x = current_pos.x + 5
+					pass
+				
+				if ship.global_position.y > pos_to_defend.y:
+					y = current_pos.y - 5
+					pass
+				else:
+					y = current_pos.y + 5
+					pass
+				var new_pos = GameMap.GetFreeCellCloserTo(current_pos + Vector2(x,y))
+				ship.SetTargetPosition(new_pos * BLOCKS_SIZE + OFFSET_POSITION)
+				pass
+			pass
 		pass
 	ReasoningTimer += 1
 	pass

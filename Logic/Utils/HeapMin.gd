@@ -69,5 +69,8 @@ func Clear() -> void:
 	heap.clear()
 	pass
 
+func Peek() -> Array:
+	return heap[0]
+
 func Length() -> int:
 	return heap.size()
