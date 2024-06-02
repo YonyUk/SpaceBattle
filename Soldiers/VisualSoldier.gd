@@ -219,7 +219,8 @@ func MakeActions() -> void:
 			ShooterTimer.start()
 			Shooting = false
 			pass
-		var vector_to_target = Perception.EnemySeen().global_position - global_position
+		var target = Perception.EnemySeen()
+		var vector_to_target = target.global_position - global_position
 		rotation = vector_to_target.angle() + PI / 2
 		pass
 	pass
@@ -305,7 +306,7 @@ func _on_VisualSoldier_area_entered(area):
 	pass # Replace with function body.
 
 func _on_ShipRadar_ShipDetected(ship):
-	if not ship == self and not ship == soldierItem and ship.TEAM == IDS.EnemyTeam:
+	if not ship == self and not ship == soldierItem and not ship.TEAM == TEAM and not ship.ID == IDS.BulletID:
 		EnemysSeen.append(ship)
 		pass
 	pass # Replace with function body.
