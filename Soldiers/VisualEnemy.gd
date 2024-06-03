@@ -5,7 +5,6 @@ class_name VisualEnemy
 func _ready():
 	soldierItem = $EnemyItem
 	Body = $Body
-	VisionRange = sqrt(($EnemyItem/ShipDirector.global_position - global_position).length_squared())
 	Radar = $ShipRadar
 	ID = IDS.SoldierID
 	TEAM = IDS.EnemyTeam

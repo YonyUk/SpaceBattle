@@ -212,9 +212,9 @@ func ResolveDefendersConflicts() -> void:
 			if not ship in Defenders:
 				Defenders.append(ship)
 				CurrentDefendersCount += 1
+				InternalGameState.AssignPositionToShip(ship,sectors_priority.Pop())
+				InternalGameState.AssignShipState(ship,States.ShipStateDefend)
 				pass
-			InternalGameState.AssignPositionToShip(ship,sectors_priority.Pop())
-			InternalGameState.AssignShipState(ship,States.ShipStateDefend)
 			pass
 		pass
 	pass

@@ -1,8 +1,4 @@
-extends VisualSoldier
-
-onready var LeftShooter = $LeftShooter
-onready var RightShooter = $RightShooter
-onready var CenterShooter = $CenterShooter
+extends VisualEnemy
 
 var Subordinades = []
 var TotalEnemysSeen = []
@@ -13,7 +9,7 @@ var ReasoningTimer = 0
 var DefensivePerimeter = 5
 
 func _ready():
-	soldierItem = $CommandItem
+	soldierItem = $EnemyCommandItem
 	Speed = Speed / 2 
 	Subordinades = get_tree().current_scene.GetSubordinades(TEAM)
 	Subordinades.append(self)
@@ -35,31 +31,12 @@ func SetDefensivePerimeter(perimeter: int) -> void:
 	DefensivePerimeter = perimeter
 	pass
 
-func Shoot() -> void:
-	Shooting = false
-	var leftBullet = LeftShooter.Shoot(TEAM)
-	var rightBullet = RightShooter.Shoot(TEAM)
-	var centerBullet = CenterShooter.Shoot(TEAM)
-	leftBullet.rotation = rotation
-	rightBullet.rotation = rotation
-	centerBullet.rotation = rotation
-	get_tree().current_scene.AddBullet(leftBullet)
-	get_tree().current_scene.AddBullet(rightBullet)
-	get_tree().current_scene.AddBullet(centerBullet)
-	pass
-
 func SetReasoningLatency(latency: int) -> void:
 	ReasoningLatency = latency
 	pass
 
 func SetDefensiveRatio(ratio: int) -> void:
 	DefensiveRatio = ratio
-	pass
-
-func SetMapLimits(size:Vector2) -> void:
-	LeftShooter.SetMapLimits(size)
-	RightShooter.SetMapLimits(size)
-	CenterShooter.SetMapLimits(size)
 	pass
 
 func _physics_process(delta):
@@ -78,7 +55,7 @@ func _physics_process(delta):
 					pass
 				pass
 			pass
-		StrategyBrain.SetEnemys(IDS.EnemyTeam,enemys)
+		StrategyBrain.SetEnemys(IDS.UserTeam,enemys)
 		var strategy = StrategyBrain.GetStrategy(IDS.EnemyTeam)
 		for ship in strategy.ShipsPositionsAssigned.keys():
 			ship.SetTargetPosition(strategy.ShipsPositionsAssigned[ship] * BLOCKS_SIZE + OFFSET_POSITION)
@@ -119,7 +96,7 @@ func CommandeDefenders() -> void:
 		pass
 	pass
 
-func _on_VisualComander_body_entered(body):
+func _on_VisualEnemyCommander_body_entered(body):
 	var bussy_cells = []
 	if body.ID == IDS.UserID:
 		bussy_cells = body.GetBussyCells()
@@ -129,7 +106,7 @@ func _on_VisualComander_body_entered(body):
 	GameMap.FreeBussyCells(bussy_cells)
 	pass # Replace with function body.
 
-func _on_VisualComander_area_entered(area):
+func _on_VisualEnemyCommander_area_entered(area):
 	var IsShip = area.ID == IDS.SoldierID or area.ID == IDS.CommandID
 	if ShipsCollision and IsShip and area > self:
 		var bussy_cells = area.GetBussyCells()

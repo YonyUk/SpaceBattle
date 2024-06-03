@@ -6,6 +6,7 @@ onready var backgroundInstancer = preload("res://background/BackGround.tscn")
 onready var enemyInstancer = preload("res://Soldiers/VisualEnemy.tscn")
 onready var soldiersInstancer = preload("res://Soldiers/VisualSoldier.tscn")
 onready var userCommanderInstancer = preload("res://Soldiers/Command/VisualComander.tscn")
+onready var enemyCommanderInstancer = preload("res://Soldiers/Command/VisualEnemyCommander.tscn")
 onready var FlagInstancer = preload("res://Flags/Flag.tscn")
 
 var game_engine = GameEngine.new()
@@ -13,11 +14,11 @@ var WIDTH = 0
 var HEIGHT = 0
 var ROW_SECTORS = 10
 var COLUMN_SECTORS = 10
-var SECTORS_DIMENTIONS = 10
+var SECTORS_DIMENTIONS = 20
 var BLOCK_SIZE = 60
 var OFFSET_POSITION = Vector2(BLOCK_SIZE / 2,BLOCK_SIZE / 2)
-var MAX_SOLDIERS = 12
-var VisionRange = 300
+var MAX_SOLDIERS = 7
+var VisionRange = 400
 var PerceptionLatency = 10
 var CommanderLatency = 1800
 var Player = null
@@ -59,6 +60,10 @@ func GenerateSoldiers():
 		soldier.AutoSetVisionRange()
 		soldier.SetVisionRange(VisionRange)
 		pass
+	GenerateCommanders()
+	pass
+
+func GenerateCommanders() -> void:
 	UserCommander = game_engine.GenerateCommander(IDS.UserTeam,UserDefensiveRatio)
 	add_child(UserCommander)
 	UserCommander.SetMapLimits(GetMapLimits())
@@ -66,6 +71,14 @@ func GenerateSoldiers():
 	UserCommander.AutoSetVisionRange()
 	UserCommander.SetVisionRange(VisionRange)
 	UserCommander.SetReasoningLatency(CommanderLatency)
+	
+	EnemyCommander = game_engine.GenerateCommander(IDS.EnemyTeam,UserDefensiveRatio)
+	add_child(EnemyCommander)
+	EnemyCommander.SetMapLimits(GetMapLimits())
+	EnemyCommander.SetPerceptionLatency(PerceptionLatency)
+	EnemyCommander.AutoSetVisionRange()
+	EnemyCommander.SetVisionRange(VisionRange)
+	EnemyCommander.SetReasoningLatency(CommanderLatency)
 	pass
 
 func GetMapLimits():
@@ -104,6 +117,7 @@ func _ready():
 	game_engine.SetPerceptionLatency(PerceptionLatency)
 	game_engine.SetVisionRange(VisionRange)
 	game_engine.SetUserCommanderInstancer(userCommanderInstancer)
+	game_engine.SetEnemyCommanderInstancer(enemyCommanderInstancer)
 	game_engine.SetFlagInstancer(FlagInstancer)
 	BackGround = backgroundInstancer.instance()
 	add_child(BackGround)
@@ -115,15 +129,19 @@ func _ready():
 
 func _physics_process(delta):
 	BackGround.position = Player.position
-	for soldier in EnemySoldiers:
-		if soldier.OnPosition:
-			var new_pos = game_engine.GetFreeMapPosition()
-			soldier.SetTargetPosition(new_pos * BLOCK_SIZE + OFFSET_POSITION)
-			pass
-		pass
+#	for soldier in EnemySoldiers:
+#		if soldier.OnPosition:
+#			var new_pos = game_engine.GetFreeMapPosition()
+#			soldier.SetTargetPosition(new_pos * BLOCK_SIZE + OFFSET_POSITION)
+#			pass
+#		pass
 	if UserCommander.OnPosition:
 		var new_pos = game_engine.GetFreeMapPosition()
 		UserCommander.SetTargetPosition(new_pos * BLOCK_SIZE + OFFSET_POSITION)
+		pass
+	if EnemyCommander.OnPosition:
+		var new_pos = game_engine.GetFreeMapPosition()
+		EnemyCommander.SetTargetPosition(new_pos * BLOCK_SIZE + OFFSET_POSITION)
 		pass
 	pass
 
