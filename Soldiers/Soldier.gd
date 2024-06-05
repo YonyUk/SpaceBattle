@@ -18,11 +18,29 @@ var PathToTargetPosition := []
 var BLOCKS_SIZE = 1
 var OFFSET_POSITION = Vector2()
 var LifePoints := 0
+var MaxLifePoints := 0
 var DefendingPosition = null
 var TargetEnemy = null
 var SelfFlagPosition := Vector2()
 var DefensivePerimeter = 10
 var GameMap = null
+
+func SetMaxLifePoints(value: int) -> void:
+	MaxLifePoints = value
+	pass
+
+func ApplyDamage(damage: int) -> void:
+	LifePoints -= damage
+	pass
+
+func Health(value: float) -> void:
+	if LifePoints < MaxLifePoints:
+		LifePoints += value
+		pass
+	if LifePoints > MaxLifePoints:
+		LifePoints = MaxLifePoints
+		pass
+	pass
 
 func SetDefensivePerimeter(distance: int) -> void:
 	DefensivePerimeter = distance

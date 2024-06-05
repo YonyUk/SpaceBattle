@@ -24,6 +24,16 @@ var UserCommander = null
 var EnemyCommander = null
 var IDS = AreasIDS.new()
 var SectorsCount = 0
+var SoldiersLifePoints := 0
+var SoldiersSaveDistance = 20
+
+func SetSoldierSaveDistance(distance) -> void:
+	SoldiersSaveDistance = distance
+	pass
+
+func SetSoldiersLifePoints(value: int) -> void:
+	SoldiersLifePoints = value
+	pass
 
 func SetMapParameters(blocks_size: int,offset_position: Vector2) -> void:
 	BLOCKS_SIZE = blocks_size
@@ -144,6 +154,8 @@ func GenerateSoldiers(team:String) -> Array:
 			EnemySoldiers.append(soldiers)
 			soldier = EnemyInstancer.instance()
 			pass
+		soldier.SetSaveDistance(SoldiersSaveDistance)
+		soldier.SetLifePoints(SoldiersLifePoints)
 		soldier.SetGameMap(GameMap)
 		soldier.SetGameParameters(BLOCKS_SIZE,OFFSET_POSITION,self)
 		soldier.position = pos * BLOCKS_SIZE + OFFSET_POSITION
@@ -171,6 +183,8 @@ func GenerateCommander(team:String,defensive_ratio: int):
 		commander = EnemyCommanderInstancer.instance()
 		EnemyCommander = commander
 		pass
+	commander.SetSaveDistance(SoldiersSaveDistance)
+	commander.SetLifePoints(SoldiersLifePoints)
 	commander.SetGameMap(GameMap)
 	commander.SetGameParameters(BLOCKS_SIZE,OFFSET_POSITION,self)
 	commander.position = pos * BLOCKS_SIZE + OFFSET_POSITION

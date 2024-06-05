@@ -249,12 +249,10 @@ func SetSectorsPriority(pos:Vector2) -> HeapMin:
 func SetDefendersPriority() -> StrategyHeapMin:
 	var heap = StrategyHeapMin.new()
 	for ship in Allys:
-		if not ship.GetSoldierState() == States.ShipStateDefend:
-			var discrete_position = Vector2(int(ship.global_position.x / BlocksSize), int(ship.global_position.y / BlocksSize))
-			var vector_distance: Vector2 = discrete_position - SelfFlagPosition
-			var distance = vector_distance.length_squared()
-			heap.Push(ship,distance)
-			pass
+		var discrete_position = Vector2(int(ship.global_position.x / BlocksSize), int(ship.global_position.y / BlocksSize))
+		var vector_distance: Vector2 = discrete_position - SelfFlagPosition
+		var distance = vector_distance.length_squared()
+		heap.Push(ship,distance)
 		pass
 	return heap
 

@@ -98,22 +98,20 @@ func CommandeDefenders() -> void:
 		var current_pos = ship.GetDefendingPosition()
 		if ship.OnPosition and current_pos:
 			var pos_to_defend = current_pos * BLOCKS_SIZE + OFFSET_POSITION
-			var x = 0
-			var y = 0
-			if ship.global_position.x > pos_to_defend.x:
-				x = current_pos.x - 5
+			var posibles_positions = [
+				Vector2(0,5),
+				Vector2(0,-5),
+				Vector2(5,0),
+				Vector2(-5,0)
+			]
+			var index = int(rand_range(0,posibles_positions.size()))
+			var new_pos = current_pos + posibles_positions[index]
+			while not GameMap.IsInRange(new_pos.x,new_pos.y):
+				posibles_positions.pop_at(index)
+				index = int(rand_range(0,posibles_positions.size()))
+				new_pos = current_pos + posibles_positions[index]
 				pass
-			else:
-				x = current_pos.x + 5
-				pass
-			
-			if ship.global_position.y > pos_to_defend.y:
-				y = current_pos.y - 5
-				pass
-			else:
-				y = current_pos.y + 5
-				pass
-			var new_pos = GameMap.GetFreeCellCloserTo(Vector2(x,y))
+			new_pos = GameMap.GetFreeCellCloserTo(new_pos)
 			ship.SetTargetPosition(new_pos * BLOCKS_SIZE + OFFSET_POSITION)
 			pass
 		pass

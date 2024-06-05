@@ -14,13 +14,16 @@ var WIDTH = 0
 var HEIGHT = 0
 var ROW_SECTORS = 10
 var COLUMN_SECTORS = 10
-var SECTORS_DIMENTIONS = 20
+var SECTORS_DIMENTIONS = 10
 var BLOCK_SIZE = 60
 var OFFSET_POSITION = Vector2(BLOCK_SIZE / 2,BLOCK_SIZE / 2)
-var MAX_SOLDIERS = 7
+var MAX_SOLDIERS = 2
 var VisionRange = 400
 var PerceptionLatency = 10
 var CommanderLatency = 1800
+var UserDefensiveRatio = 500
+var SoldiersLifePoints = 50
+var SoldierSaveDistance = 60
 var Player = null
 var BackGround = null
 var UserSoldiers = []
@@ -29,7 +32,6 @@ var UserCommander = null
 var EnemyCommander = null
 var IDS = AreasIDS.new()
 var FlagsTeams = {}
-var UserDefensiveRatio = 500
 
 func CurrentMap() -> Map:
 	return game_engine.GameMap
@@ -107,7 +109,9 @@ func GetFlagPosition(team: String):
 
 func _ready():
 	# setting up the game_engine
+	game_engine.SetSoldierSaveDistance(SoldierSaveDistance)
 	game_engine.SetMapParameters(BLOCK_SIZE,OFFSET_POSITION)
+	game_engine.SetSoldiersLifePoints(SoldiersLifePoints)
 	game_engine.SetEnemyInstancer(enemyInstancer)
 	game_engine.SetSoldierInstancer(soldiersInstancer)
 	game_engine.SetMaxSoldiers(MAX_SOLDIERS)

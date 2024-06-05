@@ -35,7 +35,20 @@ var EnemysSeen = []
 var Shooting = true
 var SectorsCount = 0
 var States = ShipStates.new()
+var SaveDistance = 20
+
 # Methods for the game
+
+func SetSaveDistance(distance) -> void:
+	SaveDistance = distance
+	pass
+
+func Destroy(damage: int) -> void:
+	Core.ApplyDamage(damage)
+	if Core.LifePoints <= 0:
+		queue_free()
+		pass
+	pass
 
 func SetDefensiveDistance(distance: float) -> void:
 	Perception.SetDefendingDistance(distance)
@@ -190,13 +203,21 @@ func RotateSoldierItem(vector: Vector2) -> void:
 		pass
 	pass
 
+func GetEnemyDistance(enemy) -> float:
+	var vector_distance: Vector2 = enemy.global_position - global_position
+	var result = sqrt(vector_distance.length_squared())
+	return result
+
 func MakeActions() -> void:
 	Perception.SetStateMoving(Core.StateMoving)
-	
+	var can_move = false
 	#Offensive Actions
 	if Perception.Attacking():
 		var enemy = EnemySeen()[1]
 		SetAttackTarget(enemy)
+		if enemy and GetEnemyDistance(enemy) > SaveDistance:
+			can_move = true
+			pass
 		pass
 	else:
 		SetAttackTarget(null)
@@ -204,7 +225,14 @@ func MakeActions() -> void:
 	
 	# Moving Actions
 	if Perception.Moving():
-		Move()
+		if Perception.Attacking():
+			if can_move:
+				Move()
+				pass
+			pass
+		else:
+			Move()
+			pass
 		pass
 	elif global_position == TargetPosition:
 		OnPosition = true
