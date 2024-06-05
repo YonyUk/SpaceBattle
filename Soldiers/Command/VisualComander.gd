@@ -18,6 +18,7 @@ func _ready():
 	Subordinades = get_tree().current_scene.GetSubordinades(TEAM)
 	Subordinades.append(self)
 	selfFlagPosition = get_tree().current_scene.GetFlagPosition(TEAM)
+	StrategyBrain.SetTeam(TEAM)
 	StrategyBrain.SetBlocksSize(BLOCKS_SIZE)
 	StrategyBrain.SetDefensiveRatio(DefensiveRatio)
 	StrategyBrain.SetOffsetPosition(OFFSET_POSITION)
@@ -29,6 +30,7 @@ func _ready():
 	StrategyBrain.SetEnemys(IDS.EnemyTeam,enemys)
 	var flag_enemy_position = get_tree().current_scene.GetFlagPosition(IDS.EnemyTeam)
 	StrategyBrain.SetObjetivePoint(flag_enemy_position)
+	SetLifePoints(Core.LifePoints * 10)
 	pass
 
 func SetDefensivePerimeter(perimeter: int) -> void:
@@ -62,22 +64,27 @@ func SetMapLimits(size:Vector2) -> void:
 	CenterShooter.SetMapLimits(size)
 	pass
 
+func GetCurrentEnemys(team: String) -> Array:
+	var enemys = []
+	for ally in Subordinades:
+		for ship in ally.EnemysSeen:
+			if not ship in enemys:
+				enemys.append(ship)
+				pass
+			pass
+		pass
+	return enemys
+
 func _physics_process(delta):
 	._physics_process(delta)
+	Subordinades = get_tree().current_scene.GetSubordinades(TEAM)
+	Subordinades.append(self)
+	StrategyBrain.SetAllys(Subordinades)
+	var enemys = GetCurrentEnemys(IDS.EnemyTeam)
+	
 	if ReasoningTimer == ReasoningLatency:
 		StrategyBrain.SetMinDefenders(int(Subordinades.size() / 3))
 		StrategyBrain.SetMinSeekers(int(Subordinades.size() / 4))
-		Subordinades = get_tree().current_scene.GetSubordinades(TEAM)
-		Subordinades.append(self)
-		StrategyBrain.SetAllys(Subordinades)
-		var enemys = []
-		for ally in Subordinades:
-			for ship in ally.EnemysSeen:
-				if not ship in enemys:
-					enemys.append(ship)
-					pass
-				pass
-			pass
 		StrategyBrain.SetEnemys(IDS.EnemyTeam,enemys)
 		var strategy = StrategyBrain.GetStrategy(IDS.EnemyTeam)
 		for ship in strategy.ShipsPositionsAssigned.keys():

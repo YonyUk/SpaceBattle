@@ -46,8 +46,12 @@ func SetSaveDistance(distance) -> void:
 func Destroy(damage: int) -> void:
 	Core.ApplyDamage(damage)
 	if Core.LifePoints <= 0:
-		queue_free()
+		call_deferred("SelfDelete")
 		pass
+	pass
+
+func SelfDelete() -> void:
+	get_tree().current_scene.DeleteShip(self,TEAM)
 	pass
 
 func SetDefensiveDistance(distance: float) -> void:

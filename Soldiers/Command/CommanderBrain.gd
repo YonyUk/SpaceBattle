@@ -72,6 +72,7 @@ func SetFlagPosition(pos: Vector2) -> void:
 
 func SetAllys(allys: Array) -> void:
 	Allys = allys
+	InternalGameState.SetTeam(SelfTeam,Allys)
 	pass
 
 func SetTeam(team: String) -> void:
@@ -89,8 +90,8 @@ func SetDefensiveRatio(ratio: int) -> void:
 func SetGameState(defenders: int,flag_position: Vector2,allys: Array,team: String) -> void:
 	SetMinDefenders(defenders)
 	SetFlagPosition(flag_position)
-	SetAllys(allys)
 	SetTeam(team)
+	SetAllys(allys)
 	InternalGameState.SetTeam(team,allys)
 	InternalGameState.SetFlagLocation(team,flag_position)
 	pass
@@ -126,9 +127,24 @@ func CheckDefendersConstraints() -> bool:
 	DefendersConstraints = true
 	return true
 
-func SelfFlagAverageDistance(team: String) -> bool:
+func GetCurrentEnemysSeen() -> Array:
+	var result = []
+	for ally in Allys:
+		for soldier in ally.EnemysSeen:
+			if not soldier in result and not soldier.TEAM == SelfTeam:
+				result.append(soldier)
+				pass
+			pass
+		pass
+	return result
+
+func SelfFlagAverageDistance() -> bool:
 	DistanceToSelfFlagAverage = InternalGameState.DistanceAverageToSelfFlag(SelfTeam)
-	DistanceAverageToFlagTeam = InternalGameState.DistanceAverageFromTeamToFlag(team,SelfTeam)
+	var enemys = GetCurrentEnemysSeen()
+	if enemys.size() == 0:
+		SelfFlagAverageDistanceConstraint = true
+		return true
+	DistanceAverageToFlagTeam = InternalGameState.DistanceAverageFromTeamToFlag(enemys,SelfTeam)
 	if DistanceAverageToFlagTeam - DistanceToSelfFlagAverage < 0:
 		SelfFlagAverageDistanceConstraint = false
 		return false
@@ -143,7 +159,8 @@ func ResolveAverageDistance(team: String) -> void:
 			movements[ship] = sectors_priority
 			pass
 		pass
-	while InternalGameState.DistanceAverageToSelfFlag(SelfTeam) > InternalGameState.DistanceAverageFromTeamToFlag(team,SelfTeam):
+	var enemys = GetCurrentEnemysSeen()
+	while enemys.size() > 0 and InternalGameState.DistanceAverageToSelfFlag(SelfTeam) > InternalGameState.DistanceAverageFromTeamToFlag(enemys,SelfTeam):
 		var current_cost = 0
 		var ship_to_move = null
 		var exists_transition = false
@@ -193,7 +210,7 @@ func CheckConstraints(team: String) -> bool:
 	if not CheckShipsSeekerConstraint():
 		return false
 
-	if not SelfFlagAverageDistance(team):
+	if not SelfFlagAverageDistance():
 		return false
 #	var min_dis_to_self_flag = InternalGameState.MinDistanceFromTeamToFlagTeam(SelfTeam,SelfTeam)
 #	var min_dis_from_other = InternalGameState.MinDistanceFromTeamToFlagTeam(team,SelfTeam)
@@ -311,6 +328,7 @@ func GetStrategy(team:String) -> GameState:
 	for ship in Allys:
 		var discrete_position = Vector2(int(ship.global_position.x / BlocksSize), int(ship.global_position.y / BlocksSize))
 		InternalGameState.AssignPositionToShip(ship,discrete_position)
+		InternalGameState.AssignShipState(ship,ship.GetSoldierState())
 		pass
 	while not CheckConstraints(team):
 		if not DefendersConstraints:

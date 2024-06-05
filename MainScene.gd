@@ -12,17 +12,17 @@ onready var FlagInstancer = preload("res://Flags/Flag.tscn")
 var game_engine = GameEngine.new()
 var WIDTH = 0
 var HEIGHT = 0
-var ROW_SECTORS = 10
-var COLUMN_SECTORS = 10
+var ROW_SECTORS = 3
+var COLUMN_SECTORS = 3
 var SECTORS_DIMENTIONS = 10
 var BLOCK_SIZE = 60
 var OFFSET_POSITION = Vector2(BLOCK_SIZE / 2,BLOCK_SIZE / 2)
-var MAX_SOLDIERS = 2
+var MAX_SOLDIERS = 10
 var VisionRange = 400
 var PerceptionLatency = 10
 var CommanderLatency = 1800
 var UserDefensiveRatio = 500
-var SoldiersLifePoints = 50
+var SoldiersLifePoints = 5000
 var SoldierSaveDistance = 60
 var Player = null
 var BackGround = null
@@ -36,10 +36,28 @@ var FlagsTeams = {}
 func CurrentMap() -> Map:
 	return game_engine.GameMap
 
-func GetSubordinades(team:String) -> Array:
+func DeleteShip(ship,team: String) -> void:
+	var index = 0
 	if team == IDS.UserTeam:
-		return UserSoldiers
-	return EnemySoldiers
+		index = UserSoldiers.find(ship)
+		UserSoldiers.pop_at(index)
+		pass
+	else:
+		index = EnemySoldiers.find(ship)
+		EnemySoldiers.pop_at(index)
+		pass
+	remove_child(ship)
+	pass
+
+func GetSubordinades(team:String) -> Array:
+	var result = []
+	if team == IDS.UserTeam:
+		result += UserSoldiers
+		pass
+	else:
+		result += EnemySoldiers
+		pass
+	return result
 
 func AddBullet(bullet) -> void:
 	add_child(bullet)

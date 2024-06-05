@@ -21,10 +21,11 @@ func _ready():
 	StrategyBrain.SetSectorsCount(SectorsCount)
 	StrategyBrain.SetGameState(int(Subordinades.size() / 3),selfFlagPosition,Subordinades,TEAM)
 	StrategyBrain.BuildMapSectors()
-	var enemys = get_tree().current_scene.GetSubordinades(IDS.EnemyTeam)
-	StrategyBrain.SetEnemys(IDS.EnemyTeam,enemys)
-	var flag_enemy_position = get_tree().current_scene.GetFlagPosition(IDS.EnemyTeam)
+	var enemys = get_tree().current_scene.GetSubordinades(IDS.UserTeam)
+	StrategyBrain.SetEnemys(IDS.UserTeam,enemys)
+	var flag_enemy_position = get_tree().current_scene.GetFlagPosition(IDS.UserTeam)
 	StrategyBrain.SetObjetivePoint(flag_enemy_position)
+	SetLifePoints(Core.LifePoints * 10)
 	pass
 
 func SetDefensivePerimeter(perimeter: int) -> void:
@@ -39,24 +40,28 @@ func SetDefensiveRatio(ratio: int) -> void:
 	DefensiveRatio = ratio
 	pass
 
+func GetCurrentEnemys(team: String) -> Array:
+	var enemys = []
+	for ally in Subordinades:
+		for ship in ally.EnemysSeen:
+			if not ship in enemys:
+				enemys.append(ship)
+				pass
+			pass
+		pass
+	return enemys
+
 func _physics_process(delta):
 	._physics_process(delta)
+	Subordinades = get_tree().current_scene.GetSubordinades(TEAM)
+	Subordinades.append(self )
+	StrategyBrain.SetAllys(Subordinades)
+	var enemys = GetCurrentEnemys(IDS.UserTeam)
 	if ReasoningTimer == ReasoningLatency:
 		StrategyBrain.SetMinDefenders(int(Subordinades.size() / 3))
 		StrategyBrain.SetMinSeekers(int(Subordinades.size() / 4))
-		Subordinades = get_tree().current_scene.GetSubordinades(TEAM)
-		Subordinades.append(self)
-		StrategyBrain.SetAllys(Subordinades)
-		var enemys = []
-		for ally in Subordinades:
-			for ship in ally.EnemysSeen:
-				if not ship in enemys:
-					enemys.append(ship)
-					pass
-				pass
-			pass
 		StrategyBrain.SetEnemys(IDS.UserTeam,enemys)
-		var strategy = StrategyBrain.GetStrategy(IDS.EnemyTeam)
+		var strategy = StrategyBrain.GetStrategy(IDS.UserTeam)
 		for ship in strategy.ShipsPositionsAssigned.keys():
 			ship.SetTargetPosition(strategy.ShipsPositionsAssigned[ship] * BLOCKS_SIZE + OFFSET_POSITION)
 			ship.SetSoldierState(strategy.ShipsStateAssigned[ship])

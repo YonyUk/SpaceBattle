@@ -26,6 +26,7 @@ var IDS = AreasIDS.new()
 var SectorsCount = 0
 var SoldiersLifePoints := 0
 var SoldiersSaveDistance = 20
+var FlagsPositions = {}
 
 func SetSoldierSaveDistance(distance) -> void:
 	SoldiersSaveDistance = distance
@@ -58,7 +59,8 @@ func SetFlagPosition(team) -> Vector2:
 	var x_pos = int(rand_range(x_limit_down,x_limit_up))
 	var y = int(rand_range(0,GameMap.YSize()))
 	var pos = GameMap.GetFreeCellCloserTo(Vector2(x_pos,y))
-	return pos * BLOCKS_SIZE
+	FlagsPositions[team] = pos
+	return pos * BLOCKS_SIZE + OFFSET_POSITION
 
 func SetFlag(team):
 	var flag = null
@@ -140,11 +142,13 @@ func GetPathTo(from:Vector2,to:Vector2) -> Array:
 func GetFreeMapPosition() -> Vector2:
 	return GameMap.GetFreePosition()
 
+# here we sets the soldiers around it's owns flag
 func GenerateSoldiers(team:String) -> Array:
 	var soldiers = []
-	var bussy_cells := []
+	var bussy_cells := [FlagsPositions[team]]
+	GameMap.SetBussyCells(bussy_cells)
 	for i in range(MaxSoldiers):
-		var pos = GetFreeMapPosition()
+		var pos = GameMap.GetFreeCellCloserTo(FlagsPositions[team])
 		var soldier = null
 		if team == IDS.UserTeam:
 			soldier = SoldierInstancer.instance()
@@ -159,10 +163,6 @@ func GenerateSoldiers(team:String) -> Array:
 		soldier.SetGameMap(GameMap)
 		soldier.SetGameParameters(BLOCKS_SIZE,OFFSET_POSITION,self)
 		soldier.position = pos * BLOCKS_SIZE + OFFSET_POSITION
-		# this lines are temporaly
-		pos = GetFreeMapPosition()
-		soldier.SetTargetPosition(pos * BLOCKS_SIZE + OFFSET_POSITION)
-		# ends
 		soldiers.append(soldier)
 		var bussy_cells_soldier = soldier.GetBussyCells()
 		GameMap.SetBussyCells(bussy_cells_soldier)
