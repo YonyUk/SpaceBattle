@@ -244,7 +244,7 @@ func ResolveSeekersConflict() -> void:
 			if seekers_heap.Count() == 0 or objetive_heap.Length() == 0:
 				break
 			var ship = seekers_heap.Pop()
-			if not ship in Seekers:
+			if not ship in Seekers and not ship == self:
 				Seekers.append(ship)
 				InternalGameState.AssignPositionToShip(ship,objetive_heap.Pop())
 				InternalGameState.AssignShipState(ship,States.ShipStateIdle)
@@ -275,8 +275,10 @@ func SetDefendersPriority() -> StrategyHeapMin:
 
 func SetSeekerPriority() -> StrategyHeapMin:
 	var heap = StrategyHeapMin.new()
+	var defenders_count = 0
 	for ship in InternalGameState.ShipsPositionsAssigned.keys():
-		if ship in Defenders:
+		if ship in Defenders and defenders_count < MinShipsDefenders:
+			defenders_count += 1
 			continue
 		var vector_distance: Vector2 = InternalGameState.ShipsPositionsAssigned[ship] - PointObjetive
 		var distance = vector_distance.length_squared()

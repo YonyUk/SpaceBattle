@@ -18,6 +18,7 @@ var PathToTargetPosition := []
 var BLOCKS_SIZE = 1
 var OFFSET_POSITION = Vector2()
 var LifePoints := 0
+var LowLimitLifePoints := 0
 var MaxLifePoints := 0
 var DefendingPosition = null
 var TargetEnemy = null
@@ -64,6 +65,10 @@ func SetDefendingPosition(pos:Vector2) -> void:
 
 func SetLifePoints(points:int) -> void:
 	LifePoints = points
+	pass
+
+func SetLowLimitLifePoints(value) -> void:
+	LowLimitLifePoints = value
 	pass
 
 func SetGameParameters(blocks_size: int, offset_position: Vector2) -> void:

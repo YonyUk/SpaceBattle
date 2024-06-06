@@ -25,11 +25,16 @@ var EnemyCommander = null
 var IDS = AreasIDS.new()
 var SectorsCount = 0
 var SoldiersLifePoints := 0
+var SoldiersLowLimitLifePoints := 0
 var SoldiersSaveDistance = 20
 var FlagsPositions = {}
 
 func SetSoldierSaveDistance(distance) -> void:
 	SoldiersSaveDistance = distance
+	pass
+
+func SetSoldiersLowLimitLifePoints(value) -> void:
+	SoldiersLowLimitLifePoints = value
 	pass
 
 func SetSoldiersLifePoints(value: int) -> void:
@@ -142,6 +147,9 @@ func GetPathTo(from:Vector2,to:Vector2) -> Array:
 func GetFreeMapPosition() -> Vector2:
 	return GameMap.GetFreePosition()
 
+func GetPlayerPosition() -> Vector2:
+	return GameMap.GetFreeCellCloserTo(FlagsPositions[IDS.UserTeam]) * BLOCKS_SIZE + OFFSET_POSITION
+
 # here we sets the soldiers around it's owns flag
 func GenerateSoldiers(team:String) -> Array:
 	var soldiers = []
@@ -159,10 +167,13 @@ func GenerateSoldiers(team:String) -> Array:
 			soldier = EnemyInstancer.instance()
 			pass
 		soldier.SetSaveDistance(SoldiersSaveDistance)
-		soldier.SetLifePoints(SoldiersLifePoints)
 		soldier.SetGameMap(GameMap)
 		soldier.SetGameParameters(BLOCKS_SIZE,OFFSET_POSITION,self)
+		soldier.SetLifePoints(SoldiersLifePoints)
+		soldier.SetLowLimitLifePoints(SoldiersLowLimitLifePoints)
+		soldier.SetFlagPosition(FlagsPositions[team])
 		soldier.position = pos * BLOCKS_SIZE + OFFSET_POSITION
+		soldier.SetTargetPosition(pos * BLOCKS_SIZE + OFFSET_POSITION)
 		soldiers.append(soldier)
 		var bussy_cells_soldier = soldier.GetBussyCells()
 		GameMap.SetBussyCells(bussy_cells_soldier)
@@ -173,7 +184,7 @@ func GenerateSoldiers(team:String) -> Array:
 
 func GenerateCommander(team:String,defensive_ratio: int):
 	var bussy_cells := []
-	var pos = GetFreeMapPosition()
+	var pos = GameMap.GetFreeCellCloserTo(FlagsPositions[team])
 	var commander = null
 	if team == IDS.UserTeam:
 		commander = UserCommanderInstancer.instance()
@@ -184,16 +195,15 @@ func GenerateCommander(team:String,defensive_ratio: int):
 		EnemyCommander = commander
 		pass
 	commander.SetSaveDistance(SoldiersSaveDistance)
-	commander.SetLifePoints(SoldiersLifePoints)
 	commander.SetGameMap(GameMap)
 	commander.SetGameParameters(BLOCKS_SIZE,OFFSET_POSITION,self)
+	commander.SetLifePoints(SoldiersLifePoints)
+	commander.SetLowLimitLifePoints(SoldiersLowLimitLifePoints)
+	commander.SetFlagPosition(FlagsPositions[team])
 	commander.position = pos * BLOCKS_SIZE + OFFSET_POSITION
 	commander.SetSectorsCount(SectorsCount)
 	commander.SetDefensiveRatio(defensive_ratio)
-	# this lines are temporaly
-	pos = GetFreeMapPosition()
 	commander.SetTargetPosition(pos * BLOCKS_SIZE + OFFSET_POSITION)
-	# ends
 	return commander
 
 func VisionCollide(from:Vector2,to:Vector2) -> bool:

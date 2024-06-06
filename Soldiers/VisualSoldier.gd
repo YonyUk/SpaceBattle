@@ -7,6 +7,7 @@ onready var Body = $Body
 onready var Shooter = $Shooter
 onready var ShooterTimer = $ShootingTimer
 onready var Radar = $ShipRadar
+onready var Explosion = preload("res://Explosions/ShipExplosion.tscn")
 
 var VisionRange = 300
 var GameMap = null
@@ -15,6 +16,8 @@ var label = null
 var IDS = AreasIDS.new()
 var Core = Soldier.new()
 var Speed = 2
+var CurrentSpeed = Speed
+var AutoDefendingSpeed = Speed * 2
 var Movement := Vector2()
 var OnPosition = false
 var TargetPosition = Vector2()
@@ -36,8 +39,16 @@ var Shooting = true
 var SectorsCount = 0
 var States = ShipStates.new()
 var SaveDistance = 20
+var AutoDefendingIn = false
+var LifePoints = 0
 
 # Methods for the game
+
+func _ready():
+	label = Label.new()
+	label.text = str(Core.LifePoints)
+	add_child(label)
+	pass
 
 func SetSaveDistance(distance) -> void:
 	SaveDistance = distance
@@ -46,6 +57,9 @@ func SetSaveDistance(distance) -> void:
 func Destroy(damage: int) -> void:
 	Core.ApplyDamage(damage)
 	if Core.LifePoints <= 0:
+		var explosion = Explosion.instance()
+		explosion.global_position = global_position
+		get_tree().current_scene.AddExplosion(explosion)
 		call_deferred("SelfDelete")
 		pass
 	pass
@@ -85,6 +99,7 @@ func GetDefendingPosition() -> Vector2:
 
 func See() -> void:
 	Perception.SetLifePoints(Core.LifePoints)
+	Perception.SetLowLimitLifePoints(Core.LowLimitLifePoints)
 	Perception.SetEnemysSeen(EnemysSeen)
 	Perception.SetCurrentPosition(global_position)
 	Perception.SetTargetPosition(TargetPosition)
@@ -138,10 +153,17 @@ func SetDefendingPosition(pos:Vector2) -> void:
 
 func SetFlagPosition(pos:Vector2) -> void:
 	Core.SetFlagPosition(pos)
+	selfFlagPosition = pos * BLOCKS_SIZE + OFFSET_POSITION
 	pass
 
 func SetLifePoints(points:int) -> void:
+	Core.SetMaxLifePoints(points)
 	Core.SetLifePoints(points)
+	LifePoints = points
+	pass
+
+func SetLowLimitLifePoints(value) -> void:
+	Core.SetLowLimitLifePoints(value)
 	pass
 
 func EnemySeen() -> Array:
@@ -283,9 +305,21 @@ func FixMovement():
 	pass
 
 func Move():
-	Movement = Core.GetTargetPosition() - global_position
+	# here's the autodefending actions
+	if Perception.AutoDefending():
+		CurrentSpeed = AutoDefendingSpeed
+		if not AutoDefendingIn:
+			AutoDefendingIn = true
+			SetTargetPosition(selfFlagPosition)
+			pass
+		pass
+	else:
+		AutoDefendingIn = false
+		CurrentSpeed = Speed
+		Movement = Core.GetTargetPosition() - global_position
+		pass
 	RotateSoldierItem(Movement)
-	translate(Movement.normalized() * Speed)
+	translate(Movement.normalized() * CurrentSpeed)
 	global_position = Vector2(int(global_position.x),int(global_position.y))
 	if Movement.length_squared() < 5:
 		FixMovement()
@@ -307,6 +341,7 @@ func GetBussyCells():
 	return result
 
 func _physics_process(delta):
+	Core.Health(1)
 	if PerceptionRate == PerceptionLatency:
 		See()
 		GetCurrentState()

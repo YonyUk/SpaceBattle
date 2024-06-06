@@ -4,7 +4,7 @@ class_name Predicates
 # this class encapsules the reasoning procedure of an agent
 
 var DeductionRules = {
-	"AutoDefending":["LowLifePoints,!Defending","HasBeenShooted,HasNoSeenEnemys"],
+	"AutoDefending":["LowLifePoints","HasBeenShooted,HasNoSeenEnemys"],
 	"Defending":["CloseTo,!Attacking"],
 	"Moving":["!OnPosition"],
 	"CanRotate":["See"],

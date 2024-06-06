@@ -1,5 +1,7 @@
 extends Area2D
 
+onready var Explosion = preload("res://Explosions/Explosion.tscn")
+
 var IDS = AreasIDS.new()
 var ID = IDS.BulletID
 var TEAM = ''
@@ -7,7 +9,8 @@ var Speed = 40
 var Movement = Vector2()
 var LIMIT_X = 0
 var LIMIT_Y = 0
-var Damage := 10
+var Damage := 300
+
 
 func SetDamage(value: int) -> void:
 	Damage = value
@@ -38,13 +41,32 @@ func SelfDelete() -> void:
 	pass
 
 func _on_Bullet_body_entered(body):
+	var explosion = Explosion.instance()
+	explosion.global_position = global_position
+	get_tree().current_scene.AddExplosion(explosion)
 	call_deferred("SelfDelete")
 	pass # Replace with function body.
 
 
 func _on_Bullet_area_entered(area):
 	if area.ID == IDS.SoldierID:
-		area.Destroy(Damage)
-		call_deferred("SelfDelete")
+		var friendly_fire = get_tree().current_scene.GetFriendlyFire()
+		var interact = false
+		if area.TEAM == TEAM and friendly_fire:
+			interact = true
+			pass
+		elif area.TEAM == TEAM:
+			interact = false
+			pass
+		else:
+			interact = true
+			pass
+		if interact:
+			area.Destroy(Damage)
+			var explosion = Explosion.instance()
+			explosion.global_position = global_position
+			get_tree().current_scene.AddExplosion(explosion)
+			call_deferred("SelfDelete")
+			pass
 		pass
 	pass # Replace with function body.

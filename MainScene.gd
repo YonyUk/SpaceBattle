@@ -12,18 +12,20 @@ onready var FlagInstancer = preload("res://Flags/Flag.tscn")
 var game_engine = GameEngine.new()
 var WIDTH = 0
 var HEIGHT = 0
-var ROW_SECTORS = 3
-var COLUMN_SECTORS = 3
+var ROW_SECTORS = 10
+var COLUMN_SECTORS = 10
 var SECTORS_DIMENTIONS = 10
 var BLOCK_SIZE = 60
 var OFFSET_POSITION = Vector2(BLOCK_SIZE / 2,BLOCK_SIZE / 2)
 var MAX_SOLDIERS = 10
-var VisionRange = 400
+var VisionRange = 300
 var PerceptionLatency = 10
 var CommanderLatency = 1800
 var UserDefensiveRatio = 500
-var SoldiersLifePoints = 5000
-var SoldierSaveDistance = 60
+var SoldiersLifePoints = 1000
+var SoldiersLowLimitsLifePoints = int(SoldiersLifePoints / 3)
+var SoldierSaveDistance = 100
+var FriendlyFire = false
 var Player = null
 var BackGround = null
 var UserSoldiers = []
@@ -35,6 +37,13 @@ var FlagsTeams = {}
 
 func CurrentMap() -> Map:
 	return game_engine.GameMap
+
+func GetFriendlyFire() -> bool:
+	return FriendlyFire
+
+func AddExplosion(explosion) -> void:
+	add_child(explosion)
+	pass
 
 func DeleteShip(ship,team: String) -> void:
 	var index = 0
@@ -109,8 +118,7 @@ func SetPlayer() -> void:
 	add_child(Player)
 	Player.SetGameParameters(BLOCK_SIZE,OFFSET_POSITION,CurrentMap())
 	Player.SetViewLimits(GetMapLimits())
-	var pos = game_engine.GetFreeMapPosition()
-	Player.global_position = pos * BLOCK_SIZE + OFFSET_POSITION
+	Player.global_position = game_engine.GetPlayerPosition()
 	pass
 
 func SetFlags() -> void:
@@ -130,6 +138,7 @@ func _ready():
 	game_engine.SetSoldierSaveDistance(SoldierSaveDistance)
 	game_engine.SetMapParameters(BLOCK_SIZE,OFFSET_POSITION)
 	game_engine.SetSoldiersLifePoints(SoldiersLifePoints)
+	game_engine.SetSoldiersLowLimitLifePoints(SoldiersLowLimitsLifePoints)
 	game_engine.SetEnemyInstancer(enemyInstancer)
 	game_engine.SetSoldierInstancer(soldiersInstancer)
 	game_engine.SetMaxSoldiers(MAX_SOLDIERS)
@@ -151,20 +160,6 @@ func _ready():
 
 func _physics_process(delta):
 	BackGround.position = Player.position
-#	for soldier in EnemySoldiers:
-#		if soldier.OnPosition:
-#			var new_pos = game_engine.GetFreeMapPosition()
-#			soldier.SetTargetPosition(new_pos * BLOCK_SIZE + OFFSET_POSITION)
-#			pass
-#		pass
-	if UserCommander.OnPosition:
-		var new_pos = game_engine.GetFreeMapPosition()
-		UserCommander.SetTargetPosition(new_pos * BLOCK_SIZE + OFFSET_POSITION)
-		pass
-	if EnemyCommander.OnPosition:
-		var new_pos = game_engine.GetFreeMapPosition()
-		EnemyCommander.SetTargetPosition(new_pos * BLOCK_SIZE + OFFSET_POSITION)
-		pass
 	pass
 
 func DrawMap():

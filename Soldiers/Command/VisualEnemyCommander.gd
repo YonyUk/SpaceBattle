@@ -26,6 +26,7 @@ func _ready():
 	var flag_enemy_position = get_tree().current_scene.GetFlagPosition(IDS.UserTeam)
 	StrategyBrain.SetObjetivePoint(flag_enemy_position)
 	SetLifePoints(Core.LifePoints * 10)
+	Shooter.SetDamage(900)
 	pass
 
 func SetDefensivePerimeter(perimeter: int) -> void:
