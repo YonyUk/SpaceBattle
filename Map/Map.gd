@@ -54,19 +54,25 @@ func GetFreeCellCloserTo(pos:Vector2) -> Vector2:
 	pos = Vector2(min(map[0].size() - 1,pos.x),min(map.size() - 1,pos.y))
 	if map[pos.y][pos.x] and not pos in bussy_cells:
 		return pos
-	var queue = [pos]
+	var directions = [-1,0,1]
 	var visited = []
-	while queue.size() > 0:
+	var queue = [pos]
+	while not map[pos.y][pos.x] or pos in bussy_cells:
 		var cell = queue.pop_front()
-		var neighborgs = Neighborgs(pos)
-		for n in neighborgs:
-			if map[n.y][n.x]:
-				return n
-			queue.append(n)
+		for i in range(directions.size()):
+			for j in range(directions.size()):
+				var neigborgh = Vector2(directions[i],directions[j]) + cell
+				if not IsInRange(neigborgh.x,neigborgh.y) or neigborgh in visited:
+					continue
+				queue.push_back(neigborgh)
+				pass
 			pass
-		visited.append(cell)
+		if not cell in visited:
+			visited.append(cell)
+			pass
+		pos = queue[0]
 		pass
-	return Vector2()
+	return pos
 
 func EuclidianDistance(pos0: Vector2, pos1: Vector2) -> float:
 	return (pos1 - pos0).length_squared()

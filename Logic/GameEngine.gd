@@ -5,10 +5,136 @@ class_name GameEngine
 var GameMap = Map.new()
 var BLOCKS_SIZE = 0
 var OFFSET_POSITION = Vector2()
+var EnemyInstancer = null
+var SoldierInstancer = null
+var MaxSoldiers = 3
+var WIDTH = 0
+var HEIGHT = 0
+var ROW_SECTORS = 10
+var COLUMN_SECTORS = 10
+var SECTORS_DIMENTIONS = 10
+var VisionRange = 300
+var PerceptionLatency = 25
+var UserSoldiers = []
+var EnemySoldiers = []
+var FlagInstancer = null
+var UserCommanderInstancer = null
+var EnemyCommanderInstancer = null
+var UserCommander = null
+var EnemyCommander = null
+var IDS = AreasIDS.new()
+var SectorsCount = 0
+var SoldiersLifePoints := 0
+var SoldiersLowLimitLifePoints := 0
+var SoldiersSaveDistance = 20
+var FlagsPositions = {}
+
+func SetSoldierSaveDistance(distance) -> void:
+	SoldiersSaveDistance = distance
+	pass
+
+func SetSoldiersLowLimitLifePoints(value) -> void:
+	SoldiersLowLimitLifePoints = value
+	pass
+
+func SetSoldiersLifePoints(value: int) -> void:
+	SoldiersLifePoints = value
+	pass
 
 func SetMapParameters(blocks_size: int,offset_position: Vector2) -> void:
 	BLOCKS_SIZE = blocks_size
 	OFFSET_POSITION = offset_position
+	pass
+
+func SetFlagInstancer(instancer) -> void:
+	FlagInstancer = instancer
+	pass
+
+func SetFlagPosition(team) -> Vector2:
+	var x_limit_up = 0
+	var x_limit_down = 0
+	if team == IDS.UserTeam:
+		x_limit_up = int(GameMap.XSize() / 4)
+		x_limit_down = 0
+		pass
+	elif team == IDS.EnemyTeam:
+		x_limit_up = GameMap.XSize()
+		x_limit_down = int(GameMap.XSize() / 4) * 3
+		pass
+	var x_pos = int(rand_range(x_limit_down,x_limit_up))
+	var y = int(rand_range(0,GameMap.YSize()))
+	var pos = GameMap.GetFreeCellCloserTo(Vector2(x_pos,y))
+	FlagsPositions[team] = pos
+	return pos * BLOCKS_SIZE + OFFSET_POSITION
+
+func SetFlag(team):
+	var flag = null
+	flag = FlagInstancer.instance()
+	flag.SetTeam(team)
+	if team == IDS.UserTeam:
+		flag.SetFlagItem(IDS.BlueFlag)
+		pass
+	elif team == IDS.EnemyTeam:
+		flag.SetFlagItem(IDS.RedFlag)
+		pass
+	flag.position = SetFlagPosition(team)
+	return flag
+
+func GetMapLimits():
+	var x = COLUMN_SECTORS * SECTORS_DIMENTIONS
+	var y = ROW_SECTORS * SECTORS_DIMENTIONS
+	return Vector2(x,y) * BLOCKS_SIZE
+
+func SetUserCommanderInstancer(instancer) -> void:
+	UserCommanderInstancer = instancer
+	pass
+
+func SetEnemyCommanderInstancer(instancer) -> void:
+	EnemyCommanderInstancer = instancer
+	pass
+
+func SetVisionRange(vision_range:int) -> void:
+	VisionRange = vision_range
+	pass
+
+func SetPerceptionLatency(latency:int) -> void:
+	PerceptionLatency = latency
+	pass
+
+func SetRowSectors(rows:int) -> void:
+	ROW_SECTORS = rows
+	if SectorsCount == 0:
+		SectorsCount = rows * rows
+		pass
+	else:
+		SectorsCount = min(SectorsCount,rows * rows)
+		pass
+	pass
+
+func SetColumnSectors(columns:int) -> void:
+	COLUMN_SECTORS = columns
+	if SectorsCount == 0:
+		SectorsCount = columns * columns
+		pass
+	else:
+		SectorsCount = min(SectorsCount,columns * columns)
+		pass
+	pass
+
+func SetSectorsDimentions(dimentions:int) -> void:
+	SECTORS_DIMENTIONS = dimentions
+	pass
+
+func SetMaxSoldiers(max_soldiers: int) -> void:
+	MaxSoldiers = max_soldiers
+	pass
+
+func SetEnemyInstancer(instancer) -> void:
+	EnemyInstancer = instancer
+	pass
+
+func SetSoldierInstancer(instancer) -> void:
+	SoldierInstancer = instancer
 	pass
 
 func CreateMap(row=10,col=10,sectors=10):
@@ -21,17 +147,33 @@ func GetPathTo(from:Vector2,to:Vector2) -> Array:
 func GetFreeMapPosition() -> Vector2:
 	return GameMap.GetFreePosition()
 
-func GenerateSoldiers(max_soldiers: int,blocks_size: int,offset_positions: Vector2,EnemyInstancer,map:Map) -> Array:
+func GetPlayerPosition() -> Vector2:
+	return GameMap.GetFreeCellCloserTo(FlagsPositions[IDS.UserTeam]) * BLOCKS_SIZE + OFFSET_POSITION
+
+# here we sets the soldiers around it's owns flag
+func GenerateSoldiers(team:String) -> Array:
 	var soldiers = []
-	var bussy_cells := []
-	for i in range(max_soldiers):
-		var pos = GetFreeMapPosition()
-		var soldier = EnemyInstancer.instance()
-		soldier.SetGameMap(map)
-		soldier.SetGameParameters(blocks_size,offset_positions,self)
-		soldier.position = pos * blocks_size + offset_positions
-		pos = GetFreeMapPosition()
-		soldier.SetTargetPosition(pos * blocks_size + offset_positions)
+	var bussy_cells := [FlagsPositions[team]]
+	GameMap.SetBussyCells(bussy_cells)
+	for i in range(MaxSoldiers):
+		var pos = GameMap.GetFreeCellCloserTo(FlagsPositions[team])
+		var soldier = null
+		if team == IDS.UserTeam:
+			soldier = SoldierInstancer.instance()
+			UserSoldiers.append(soldier)
+			pass
+		elif team == IDS.EnemyTeam:
+			EnemySoldiers.append(soldiers)
+			soldier = EnemyInstancer.instance()
+			pass
+		soldier.SetSaveDistance(SoldiersSaveDistance)
+		soldier.SetGameMap(GameMap)
+		soldier.SetGameParameters(BLOCKS_SIZE,OFFSET_POSITION,self)
+		soldier.SetLifePoints(SoldiersLifePoints)
+		soldier.SetLowLimitLifePoints(SoldiersLowLimitLifePoints)
+		soldier.SetFlagPosition(FlagsPositions[team])
+		soldier.position = pos * BLOCKS_SIZE + OFFSET_POSITION
+		soldier.SetTargetPosition(pos * BLOCKS_SIZE + OFFSET_POSITION)
 		soldiers.append(soldier)
 		var bussy_cells_soldier = soldier.GetBussyCells()
 		GameMap.SetBussyCells(bussy_cells_soldier)
@@ -39,6 +181,30 @@ func GenerateSoldiers(max_soldiers: int,blocks_size: int,offset_positions: Vecto
 		pass
 	GameMap.FreeBussyCells(bussy_cells)
 	return soldiers
+
+func GenerateCommander(team:String,defensive_ratio: int):
+	var bussy_cells := []
+	var pos = GameMap.GetFreeCellCloserTo(FlagsPositions[team])
+	var commander = null
+	if team == IDS.UserTeam:
+		commander = UserCommanderInstancer.instance()
+		UserCommander = commander
+		pass
+	elif team == IDS.EnemyTeam:
+		commander = EnemyCommanderInstancer.instance()
+		EnemyCommander = commander
+		pass
+	commander.SetSaveDistance(SoldiersSaveDistance)
+	commander.SetGameMap(GameMap)
+	commander.SetGameParameters(BLOCKS_SIZE,OFFSET_POSITION,self)
+	commander.SetLifePoints(SoldiersLifePoints)
+	commander.SetLowLimitLifePoints(SoldiersLowLimitLifePoints)
+	commander.SetFlagPosition(FlagsPositions[team])
+	commander.position = pos * BLOCKS_SIZE + OFFSET_POSITION
+	commander.SetSectorsCount(SectorsCount)
+	commander.SetDefensiveRatio(defensive_ratio)
+	commander.SetTargetPosition(pos * BLOCKS_SIZE + OFFSET_POSITION)
+	return commander
 
 func VisionCollide(from:Vector2,to:Vector2) -> bool:
 	var result = false

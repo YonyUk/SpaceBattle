@@ -20,9 +20,24 @@ _global_script_classes=[ {
 "path": "res://Logic/Utils/AreasIDS.gd"
 }, {
 "base": "Node",
+"class": "CommanderBrain",
+"language": "GDScript",
+"path": "res://Soldiers/Command/CommanderBrain.gd"
+}, {
+"base": "Area2D",
+"class": "Flag",
+"language": "GDScript",
+"path": "res://Flags/Flag.gd"
+}, {
+"base": "Node",
 "class": "GameEngine",
 "language": "GDScript",
 "path": "res://Logic/GameEngine.gd"
+}, {
+"base": "Node",
+"class": "GameState",
+"language": "GDScript",
+"path": "res://Logic/GameState.gd"
 }, {
 "base": "Node",
 "class": "HeapMin",
@@ -45,6 +60,11 @@ _global_script_classes=[ {
 "path": "res://Soldiers/Predicates/Predicates.gd"
 }, {
 "base": "Node",
+"class": "ShipStates",
+"language": "GDScript",
+"path": "res://Logic/ShipsStates.gd"
+}, {
+"base": "Node",
 "class": "Soldier",
 "language": "GDScript",
 "path": "res://Soldiers/Soldier.gd"
@@ -64,7 +84,12 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Soldiers/SoldierItem.gd"
 }, {
-"base": "Area2D",
+"base": "Node",
+"class": "StrategyHeapMin",
+"language": "GDScript",
+"path": "res://Soldiers/Command/StrategyHEAP.gd"
+}, {
+"base": "VisualSoldier",
 "class": "VisualEnemy",
 "language": "GDScript",
 "path": "res://Soldiers/VisualEnemy.gd"
@@ -77,15 +102,20 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "AgentState": "",
 "AreasIDS": "",
+"CommanderBrain": "",
+"Flag": "",
 "GameEngine": "",
+"GameState": "",
 "HeapMin": "",
 "Map": "",
 "MapGenerator": "",
 "Predicates": "",
+"ShipStates": "",
 "Soldier": "",
 "SoldierAgentPerception": "",
 "SoldierCollisionDetector": "",
 "SoldierItem": "",
+"StrategyHeapMin": "",
 "VisualEnemy": "",
 "VisualSoldier": ""
 }
@@ -94,7 +124,9 @@ _global_script_class_icons={
 
 config/name="SpaceBattle"
 run/main_scene="res://MainScene.tscn"
-config/icon="res://icon.png"
+run/low_processor_mode=true
+config/icon="res://resources/ships/enemy_ship_2.png"
+config/windows_native_icon="res://resources/ships/enemy_ship_2.png"
 
 [gui]
 
@@ -112,6 +144,11 @@ rotate_right={
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":68,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
+shoot={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":32,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
 
 [mono]
 
@@ -123,4 +160,5 @@ common/enable_pause_aware_picking=true
 
 [rendering]
 
+threads/thread_model=2
 environment/default_environment="res://default_env.tres"

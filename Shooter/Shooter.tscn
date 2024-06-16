@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Shooter/Shooter.gd" type="Script" id=1]
+[ext_resource path="res://resources/sounds/bullets/bullet_shoot.mp3" type="AudioStream" id=2]
+
+[node name="Shooter" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="Director" type="Node2D" parent="."]
+position = Vector2( 0, -40 )
+
+[node name="Sound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 2 )
+volume_db = -1.0
+
+[node name="AudioTimer" type="Timer" parent="."]
+wait_time = 2.8
+
+[connection signal="timeout" from="AudioTimer" to="." method="_on_AudioTimer_timeout"]

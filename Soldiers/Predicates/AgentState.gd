@@ -53,7 +53,7 @@ func Moving() -> bool:
 func AutoDefending() -> bool:
 	return Properties['AutoDefending']
 
-func Attakcing() -> bool:
+func Attacking() -> bool:
 	return Properties['Attacking']
 
 func Defending() -> bool:

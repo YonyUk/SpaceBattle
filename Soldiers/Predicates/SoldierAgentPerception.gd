@@ -91,7 +91,7 @@ func SetEnemysSeen(enemys:Array) -> void:
 	pass
 
 func SetDefendingDistance(distance:float) -> void:
-	DefendingDistance = distance
+	DefendingDistance = distance * 4
 	pass
 
 func SetEnemyDetected(enemy) -> void:

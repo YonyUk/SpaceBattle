@@ -1,0 +1,37 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Soldiers/Command/CommandItem.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Shooter/Shooter.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Radar/ShipRadar.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Soldiers/Command/VisualComander.gd" type="Script" id=4]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 13.0384
+
+[node name="VisualComander" type="Area2D"]
+script = ExtResource( 4 )
+
+[node name="Body" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="CommandItem" parent="." instance=ExtResource( 1 )]
+scale = Vector2( 0.05, 0.05 )
+
+[node name="LeftShooter" parent="." instance=ExtResource( 2 )]
+position = Vector2( -25, -25 )
+
+[node name="RightShooter" parent="." instance=ExtResource( 2 )]
+position = Vector2( 25, -25 )
+
+[node name="CenterShooter" parent="." instance=ExtResource( 2 )]
+position = Vector2( 0, -25 )
+
+[node name="ShipRadar" parent="." instance=ExtResource( 3 )]
+
+[node name="ShootingTimer" type="Timer" parent="."]
+
+[connection signal="area_entered" from="." to="." method="_on_VisualComander_area_entered"]
+[connection signal="body_entered" from="." to="." method="_on_VisualComander_body_entered"]
+[connection signal="ShipDetected" from="ShipRadar" to="." method="_on_ShipRadar_ShipDetected"]
+[connection signal="ShipRadarExited" from="ShipRadar" to="." method="_on_ShipRadar_ShipRadarExited"]
+[connection signal="timeout" from="ShootingTimer" to="." method="_on_ShootingTimer_timeout"]

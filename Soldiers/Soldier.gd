@@ -6,6 +6,7 @@ var TargetPosition := Vector2()
 var TargetDestination = null
 var FlankPath = null
 var StateMoving = false
+var StateDefending = false
 var back = 0
 var backLeft = 1
 var left = 2
@@ -17,9 +18,38 @@ var PathToTargetPosition := []
 var BLOCKS_SIZE = 1
 var OFFSET_POSITION = Vector2()
 var LifePoints := 0
+var LowLimitLifePoints := 0
+var MaxLifePoints := 0
 var DefendingPosition = null
 var TargetEnemy = null
 var SelfFlagPosition := Vector2()
+var DefensivePerimeter = 10
+var GameMap = null
+
+func SetMaxLifePoints(value: int) -> void:
+	MaxLifePoints = value
+	pass
+
+func ApplyDamage(damage: int) -> void:
+	LifePoints -= damage
+	pass
+
+func Health(value: float) -> void:
+	if LifePoints < MaxLifePoints:
+		LifePoints += value
+		pass
+	if LifePoints > MaxLifePoints:
+		LifePoints = MaxLifePoints
+		pass
+	pass
+
+func SetDefensivePerimeter(distance: int) -> void:
+	DefensivePerimeter = distance
+	pass
+
+func SetStateDefending(value: bool) -> void:
+	StateDefending = value
+	pass
 
 func SetFlagPosition(pos:Vector2) -> void:
 	SelfFlagPosition = pos
@@ -35,6 +65,10 @@ func SetDefendingPosition(pos:Vector2) -> void:
 
 func SetLifePoints(points:int) -> void:
 	LifePoints = points
+	pass
+
+func SetLowLimitLifePoints(value) -> void:
+	LowLimitLifePoints = value
 	pass
 
 func SetGameParameters(blocks_size: int, offset_position: Vector2) -> void:
@@ -91,6 +125,8 @@ func GetTargetPosition() -> Vector2:
 	if PathToTargetPosition.size() > 0 and PathToTargetPosition[0]:
 		var result = PathToTargetPosition[0]
 		return result * BLOCKS_SIZE + OFFSET_POSITION
+	if TargetEnemy:
+		return TargetEnemy.global_position
 	return TargetPosition
 
 func NormalizeTargetPosition(pos:Vector2):
