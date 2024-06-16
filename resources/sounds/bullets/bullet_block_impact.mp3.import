@@ -11,5 +11,5 @@ dest_files=[ "res://.import/bullet_block_impact.mp3-87d94bc7986e789feb02cfa569a7
 
 [params]
 
-loop=true
+loop=false
 loop_offset=0
