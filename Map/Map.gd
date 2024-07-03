@@ -15,6 +15,23 @@ func GenerateMap(row_sectors,column_sectors,sectors_dimension) -> Array:
 	map = Generator.get_map_formatted(row_sectors,column_sectors,sectors_dimension)
 	return map
 
+func ExportMap(path: String,name: String) -> void:
+	var file = File.new() 
+	var file_path = path + '/' + name + '.json'
+	var blocks = []
+	for i in range(XSize()):
+		for j in range(YSize()):
+			if IsBlock(Vector2(i,j)):
+				blocks.append(Vector2(i,j))
+				pass
+			pass
+		pass
+	var json_data = JSON.print(blocks)
+	file.open(file_path,File.WRITE)
+	file.store_string(json_data)
+	file.close()
+	pass
+
 func SetBussyCells(cells: Array) -> void:
 	bussy_cells += cells
 	pass

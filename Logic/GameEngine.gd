@@ -29,6 +29,10 @@ var SoldiersLowLimitLifePoints := 0
 var SoldiersSaveDistance = 20
 var FlagsPositions = {}
 
+func ExportMap(path: String,name: String) -> void:
+	GameMap.ExportMap(path,name)
+	pass
+
 func SetSoldierSaveDistance(distance) -> void:
 	SoldiersSaveDistance = distance
 	pass
