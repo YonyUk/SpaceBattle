@@ -29,6 +29,9 @@ var SoldiersLowLimitLifePoints := 0
 var SoldiersSaveDistance = 20
 var FlagsPositions = {}
 
+func LoadMap(path:String) -> Vector2:
+	return GameMap.LoadMap(path)
+
 func ExportMap(path: String,name: String) -> void:
 	GameMap.ExportMap(path,name)
 	pass
@@ -55,6 +58,7 @@ func SetFlagInstancer(instancer) -> void:
 	pass
 
 func SetFlagPosition(team) -> Vector2:
+	randomize()
 	var x_limit_up = 0
 	var x_limit_down = 0
 	if team == IDS.UserTeam:

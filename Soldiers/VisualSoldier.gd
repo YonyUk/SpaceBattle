@@ -45,9 +45,6 @@ var LifePoints = 0
 # Methods for the game
 
 func _ready():
-	label = Label.new()
-	label.text = str(Core.LifePoints)
-	add_child(label)
 	pass
 
 func SetSaveDistance(distance) -> void:
@@ -305,19 +302,7 @@ func FixMovement():
 	pass
 
 func Move():
-	# here's the autodefending actions
-	if Perception.AutoDefending():
-		CurrentSpeed = AutoDefendingSpeed
-		if not AutoDefendingIn:
-			AutoDefendingIn = true
-			SetTargetPosition(selfFlagPosition)
-			pass
-		pass
-	else:
-		AutoDefendingIn = false
-		CurrentSpeed = Speed
-		Movement = Core.GetTargetPosition() - global_position
-		pass
+	Movement = Core.GetTargetPosition() - global_position
 	RotateSoldierItem(Movement)
 	translate(Movement.normalized() * CurrentSpeed)
 	global_position = Vector2(int(global_position.x),int(global_position.y))

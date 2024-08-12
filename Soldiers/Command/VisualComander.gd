@@ -15,6 +15,7 @@ var DefensivePerimeter = 5
 func _ready():
 	soldierItem = $CommandItem
 	Speed = Speed / 2 
+	CurrentSpeed = Speed
 	Subordinades = get_tree().current_scene.GetSubordinades(TEAM)
 	Subordinades.append(self)
 	selfFlagPosition = get_tree().current_scene.GetFlagPosition(TEAM)
@@ -55,6 +56,7 @@ func Shoot() -> void:
 
 func SetReasoningLatency(latency: int) -> void:
 	ReasoningLatency = latency
+	ReasoningTimer = latency
 	pass
 
 func SetDefensiveRatio(ratio: int) -> void:

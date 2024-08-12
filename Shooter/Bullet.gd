@@ -9,8 +9,7 @@ var Speed = 40
 var Movement = Vector2()
 var LIMIT_X = 0
 var LIMIT_Y = 0
-var Damage := 300
-
+var Damage := 100
 
 func SetDamage(value: int) -> void:
 	Damage = value
@@ -46,7 +45,6 @@ func _on_Bullet_body_entered(body):
 	get_tree().current_scene.AddExplosion(explosion)
 	call_deferred("SelfDelete")
 	pass # Replace with function body.
-
 
 func _on_Bullet_area_entered(area):
 	if area.ID == IDS.SoldierID:

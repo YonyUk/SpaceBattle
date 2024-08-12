@@ -35,6 +35,7 @@ func SetDefensivePerimeter(perimeter: int) -> void:
 
 func SetReasoningLatency(latency: int) -> void:
 	ReasoningLatency = latency
+	ReasoningTimer = latency
 	pass
 
 func SetDefensiveRatio(ratio: int) -> void:

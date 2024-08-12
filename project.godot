@@ -19,6 +19,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Logic/Utils/AreasIDS.gd"
 }, {
+"base": "Block",
+"class": "Asteroid1",
+"language": "GDScript",
+"path": "res://Blocks/asteroid1.gd"
+}, {
+"base": "StaticBody2D",
+"class": "Block",
+"language": "GDScript",
+"path": "res://Blocks/SteelBlock.gd"
+}, {
 "base": "Node",
 "class": "CommanderBrain",
 "language": "GDScript",
@@ -102,6 +112,8 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "AgentState": "",
 "AreasIDS": "",
+"Asteroid1": "",
+"Block": "",
 "CommanderBrain": "",
 "Flag": "",
 "GameEngine": "",

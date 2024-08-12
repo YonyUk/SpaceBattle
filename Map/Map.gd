@@ -32,6 +32,27 @@ func ExportMap(path: String,name: String) -> void:
 	file.close()
 	pass
 
+func LoadMap(path:String) -> Vector2:
+	var file = File.new()
+	file.open(path,File.READ)
+	var data = file.get_as_text()
+	var parse_data = parse_json(data)
+	var x_size = parse_data['size'][0]
+	var y_size = parse_data['size'][1]
+	var result = []
+	for i in range(x_size):
+		var row = []
+		for j in range(x_size):
+			row.append(true)
+			pass
+		result.append(row)
+		pass
+	for cell in parse_data['cells']:
+		result[cell[1]][cell[0]] = false
+		pass
+	map = result
+	return Vector2(int(x_size / 10),int(y_size / 10))
+
 func SetBussyCells(cells: Array) -> void:
 	bussy_cells += cells
 	pass
@@ -47,6 +68,8 @@ func FreeBussyCells(cells:Array) -> void:
 	pass
 
 func IsBlock(pos:Vector2) -> bool:
+	if pos.x > XSize() - 1 or pos.y > YSize() - 1:
+		return false
 	if pos in bussy_cells:
 		return true
 	return not map[pos.y][pos.x]
@@ -68,6 +91,9 @@ func GetFreePosition() -> Vector2:
 
 # BFS
 func GetFreeCellCloserTo(pos:Vector2) -> Vector2:
+#	if pos.x < 0 or pos.y < 0:
+#		1 + 3
+#		pass
 	pos = Vector2(min(map[0].size() - 1,pos.x),min(map.size() - 1,pos.y))
 	if map[pos.y][pos.x] and not pos in bussy_cells:
 		return pos
