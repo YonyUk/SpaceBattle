@@ -41,6 +41,8 @@ var States = ShipStates.new()
 var SaveDistance = 20
 var AutoDefendingIn = false
 var LifePoints = 0
+var EnemyFlagFound = false
+var EnemyFlagPosition = Vector2()
 
 # Methods for the game
 
@@ -355,7 +357,11 @@ func _on_VisualSoldier_area_entered(area):
 		SetTargetPosition(TargetPosition)
 		GameMap.FreeBussyCells(bussy_cells)
 		pass
-	pass # Replace with function body.
+	if area.ID == IDS.FlagID and not area.TEAM == TEAM:
+		EnemyFlagFound = true
+		EnemyFlagPosition = Vector2(int(area.global_position.x / BLOCKS_SIZE),int(area.global_position.y / BLOCKS_SIZE))
+		pass
+	pass
 
 func _on_ShipRadar_ShipDetected(ship):
 	if not ship == self and not ship == soldierItem and not ship.TEAM == TEAM and not ship.ID == IDS.BulletID:

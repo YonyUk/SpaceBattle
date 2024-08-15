@@ -91,9 +91,19 @@ func GetFreePosition() -> Vector2:
 
 # BFS
 func GetFreeCellCloserTo(pos:Vector2) -> Vector2:
-#	if pos.x < 0 or pos.y < 0:
-#		1 + 3
-#		pass
+	if pos.x < 0:
+		pos = Vector2(0,pos.y)
+		pass
+	elif pos.x > XSize() - 1:
+		pos = Vector2(XSize() - 1,pos.y)
+		pass
+	
+	if pos.y < 0:
+		pos = Vector2(pos.x,0)
+		pass
+	elif pos.y > YSize() - 1:
+		pos = Vector2(pos.x,YSize() - 1)
+		pass
 	pos = Vector2(min(map[0].size() - 1,pos.x),min(map.size() - 1,pos.y))
 	if map[pos.y][pos.x] and not pos in bussy_cells:
 		return pos

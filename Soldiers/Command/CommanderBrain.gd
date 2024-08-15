@@ -25,10 +25,18 @@ var States = ShipStates.new()
 var PointObjetive = Vector2(0,0)
 var Seekers = []
 var Defenders = []
+var enemyFlagFound = false
+var enemyFlagPosition = Vector2()
 
 var DefendersConstraints = false
 var SelfFlagAverageDistanceConstraint = false
 var ShipsSeekerConstraint = false
+
+func EnemyFlagFound() -> bool:
+	return enemyFlagFound
+
+func EnemyFlagPosition() -> Vector2:
+	return enemyFlagPosition
 
 func SetSectorsCount(count: int) -> void:
 	SectorsCount = count
@@ -206,16 +214,10 @@ func CheckShipsSeekerConstraint() -> bool:
 func CheckConstraints(team: String) -> bool:
 	if not CheckDefendersConstraints():
 		return false
-	
 	if not CheckShipsSeekerConstraint():
 		return false
-
 	if not SelfFlagAverageDistance():
 		return false
-#	var min_dis_to_self_flag = InternalGameState.MinDistanceFromTeamToFlagTeam(SelfTeam,SelfTeam)
-#	var min_dis_from_other = InternalGameState.MinDistanceFromTeamToFlagTeam(team,SelfTeam)
-#	if min_dis_from_other - min_dis_to_self_flag < 0:
-#		return false
 	return true
 
 func ResolveDefendersConflicts() -> void:
@@ -244,7 +246,7 @@ func ResolveSeekersConflict() -> void:
 			if seekers_heap.Count() == 0 or objetive_heap.Length() == 0:
 				break
 			var ship = seekers_heap.Pop()
-			if not ship in Seekers and not ship == self:
+			if not ship in Seekers:
 				Seekers.append(ship)
 				InternalGameState.AssignPositionToShip(ship,objetive_heap.Pop())
 				InternalGameState.AssignShipState(ship,States.ShipStateIdle)

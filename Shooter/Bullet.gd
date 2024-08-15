@@ -30,7 +30,7 @@ func SetDirection(dir:Vector2) -> void:
 
 func _physics_process(delta):
 	translate(Movement.normalized() * Speed)
-	if global_position.x > LIMIT_X or global_position.x < 0 or global_position.y < 0 or global_position.y > LIMIT_Y:
+	if global_position.x > LIMIT_X + 80 or global_position.x < - 80 or global_position.y < - 80 or global_position.y > LIMIT_Y + 80:
 		queue_free()
 		pass
 	pass

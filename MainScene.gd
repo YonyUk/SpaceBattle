@@ -4,6 +4,8 @@ onready var blockInstancer = preload("res://Blocks/SteelBlock.tscn")
 onready var asteroidInstancer = preload("res://Blocks/asteroid1.tscn")
 onready var asteroid2Instancer = preload("res://Blocks/Asteroid2.tscn")
 onready var asteroid3Instancer = preload("res://Blocks/Asteroid3.tscn")
+onready var steelInstancer = preload("res://Blocks/SteelPiece.tscn")
+onready var steel2Instancer = preload("res://Blocks/SteelPiece2.tscn")
 onready var playerInstancer = preload("res://Player/Player.tscn")
 onready var backgroundInstancer = preload("res://background/BackGround.tscn")
 onready var enemyInstancer = preload("res://Soldiers/VisualEnemy.tscn")
@@ -18,12 +20,12 @@ var HEIGHT = 0
 var ROW_SECTORS = 10
 var COLUMN_SECTORS = 10
 var SECTORS_DIMENTIONS = 10
-var BLOCK_SIZE = 50
+var BLOCK_SIZE = 46
 var OFFSET_POSITION = Vector2(BLOCK_SIZE / 2,BLOCK_SIZE / 2)
-var MAX_SOLDIERS = 8
-var VisionRange = 300
+var MAX_SOLDIERS = 7
+var VisionRange = 350
 var PerceptionLatency = 10
-var CommanderLatency = 1800
+var CommanderLatency = 800
 var UserDefensiveRatio = 500
 var SoldiersLifePoints = 1000
 var SoldiersLowLimitsLifePoints = int(SoldiersLifePoints / 3)
@@ -146,9 +148,9 @@ func ExportMaps(maps: int) -> void:
 	pass
 
 func _ready():
-	var size = game_engine.LoadMap('SavedMaps/map.json')
-	COLUMN_SECTORS = size[0]
-	ROW_SECTORS = size[1]
+#	var size = game_engine.LoadMap('SavedMaps/map14.json')
+#	COLUMN_SECTORS = size[0]
+#	ROW_SECTORS = size[1]
 	# setting up the game_engine
 	game_engine.SetSoldierSaveDistance(SoldierSaveDistance)
 	game_engine.SetMapParameters(BLOCK_SIZE,OFFSET_POSITION)
@@ -178,7 +180,7 @@ func _physics_process(delta):
 	pass
 
 func DrawMap():
-#	game_engine.CreateMap(ROW_SECTORS,COLUMN_SECTORS,SECTORS_DIMENTIONS)
+	game_engine.CreateMap(ROW_SECTORS,COLUMN_SECTORS,SECTORS_DIMENTIONS)
 	WIDTH = game_engine.GameMap.map[0].size() * BLOCK_SIZE
 	HEIGHT = game_engine.GameMap.map.size() * BLOCK_SIZE
 	for i in range(game_engine.GameMap.map[0].size()):

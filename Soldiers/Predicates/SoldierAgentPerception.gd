@@ -12,6 +12,7 @@ var EnemysSeen := []
 var DefendingDistance: float = 0
 var DetectedEnemy = null
 var LowLimitLifePoints := 0
+var EnemyFlagFound = false
 
 func SetSelfState(state:AgentState) -> void:
 	SelfState = state
