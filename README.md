@@ -10,7 +10,7 @@ Mostrar el desarrollo desde 0 de un videojuego hecho con **Godot** de manera det
 
 # <center>Space Battle</center>
 
-<img src="./SpaceBattleImage.png">
+<img src="./Documentation/SpaceBattleImage.png">
 
 ## Detalles del juego
 
