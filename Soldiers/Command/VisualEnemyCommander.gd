@@ -10,7 +10,8 @@ var DefensivePerimeter = 5
 
 func _ready():
 	soldierItem = $EnemyCommandItem
-	Speed = Speed / 2 
+	Speed = Speed / 2
+	CurrentSpeed = Speed
 	Subordinades = get_tree().current_scene.GetSubordinades(TEAM)
 	Subordinades.append(self)
 	selfFlagPosition = get_tree().current_scene.GetFlagPosition(TEAM)

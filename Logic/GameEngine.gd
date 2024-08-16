@@ -190,12 +190,14 @@ func GenerateSoldiers(team:String) -> Array:
 	GameMap.FreeBussyCells(bussy_cells)
 	return soldiers
 
-func GenerateCommander(team:String,defensive_ratio: int):
+func GenerateCommander(team:String,defensive_ratio: int,max_defenders:int,max_seekers:int):
 	var bussy_cells := []
 	var pos = GameMap.GetFreeCellCloserTo(FlagsPositions[team])
 	var commander = null
 	if team == IDS.UserTeam:
 		commander = UserCommanderInstancer.instance()
+		commander.SetMaxDefenders(max_defenders)
+		commander.SetMaxSeekers(max_seekers)
 		UserCommander = commander
 		pass
 	elif team == IDS.EnemyTeam:

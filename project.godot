@@ -154,7 +154,6 @@ _global_script_class_icons={
 
 config/name="SpaceBattle"
 run/main_scene="res://MainScene.tscn"
-run/low_processor_mode=true
 config/icon="res://resources/ships/enemy_ship_2.png"
 config/windows_native_icon="res://resources/ships/enemy_ship_2.png"
 

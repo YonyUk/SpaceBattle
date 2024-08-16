@@ -64,7 +64,9 @@ func Destroy(damage: int) -> void:
 	pass
 
 func SelfDelete() -> void:
-	get_tree().current_scene.DeleteShip(self,TEAM)
+	if get_tree():
+		get_tree().current_scene.DeleteShip(self,TEAM)
+		pass
 	pass
 
 func SetDefensiveDistance(distance: float) -> void:

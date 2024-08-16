@@ -14,10 +14,11 @@ var datas = {
 	'search_flag':false,
 	'get_flag':false,
 	'attack':false,
-	'defend':false
+	'defend':false,
+	'enemys_seen':false
 }
 
-var beliefs = ['flag_found','under_attack','flag_in_target_pos']
+var beliefs = ['flag_found','under_attack','flag_in_target_pos','enemys_seen']
 var desires = ['find_flag','capture_flag','defend_flag','cover_space','gain_supremacy']
 var intentions = ['search_flag','get_flag','attack','defend']
 
@@ -37,9 +38,9 @@ var desires_rules = {
 		['!defend']
 	],
 	'gain_supremacy':[
-		['!under_attack','attack'],
-		['!defend','!search_flag'],
-		['attack']
+		['!under_attack','enemys_seen'],
+		['!defend','enemys_seen'],
+		['!search_flag','!get_flag','enemys_seen']
 	]
 }
 
@@ -53,18 +54,17 @@ var intentions_rules = {
 		['flag_in_target_pos','!defend']
 	],
 	'attack':[
-		['!under_attack','cover_space'],
-		['!defend','!under_attack'],
+		['!defend','!under_attack','enemys_seen'],
 		['!under_attack','gain_supremacy'],
 		['!defend','gain_supremacy']
 	],
 	'defend':[
 		['under_attack'],
-		['defend']
+		['defend_flag']
 	]
 }
 
-var priorities = ['defend','search_flag','attack','get_flag']
+var priorities = ['defend','get_flag','attack','search_flag']
 
 var Beliefs = []
 var Desires = []
@@ -119,6 +119,7 @@ func BRF(perception:CommanderPerception) -> Array:
 	datas['flag_found'] = perception.FlagFound()
 	datas['under_attack'] = perception.UnderAttack()
 	datas['flag_in_target_pos'] = perception.FlagInTargetPos()
+	datas['enemys_seen'] = perception.EnemysSeen()
 	if perception.FlagFound():
 		result.append('flag_found')
 		pass
@@ -127,6 +128,9 @@ func BRF(perception:CommanderPerception) -> Array:
 		pass
 	if perception.FlagInTargetPos():
 		result.append('flag_in_target_pos')
+		pass
+	if perception.EnemysSeen():
+		result.append('enemys_seen')
 		pass
 	return result
 
@@ -149,7 +153,7 @@ func SELECT() -> Array:
 	return result
 
 func FILTER() -> String:
-	for intention in intentions:
+	for intention in priorities:
 		if intention in Intentions:
 			return intention
 		pass
@@ -160,6 +164,9 @@ func ACTION(perception:CommanderPerception) -> String:
 	Desires = OPTIONS()
 	Intentions = SELECT()
 	return FILTER()
+
+func enemys_seen() -> bool:
+	return datas['enemys_seen']
 
 func defend() -> bool:
 	return datas['defend']

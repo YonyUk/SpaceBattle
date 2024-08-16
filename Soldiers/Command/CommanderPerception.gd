@@ -5,6 +5,11 @@ class_name CommanderPerception
 var flagFound = false
 var underAttack = false
 var flagInTargetPos = false
+var Enemys = []
+
+func setEnemys(enemys: Array) -> void:
+	Enemys = enemys
+	pass
 
 func setFlagInTargetPos(value:bool) -> void:
 	flagInTargetPos = value
@@ -26,3 +31,6 @@ func UnderAttack() -> bool:
 
 func FlagInTargetPos() -> bool:
 	return flagInTargetPos
+
+func EnemysSeen() -> bool:
+	return Enemys.size() > 0
