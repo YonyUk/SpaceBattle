@@ -21,12 +21,13 @@ var StaticMaxDefenders = 1
 var StaticMaxSeekers = 1
 var SectorsSeen = []
 var CurrentSectorToExplore = Vector2()
-var exploredSectorDistance = 200
+var exploredSectorDistance = 450
 var FlagFound = false
 var FlagInTargetPos = false
 var EnemyFlagPos = Vector2()
 var SectorsToExplore = []
 var SectorSeen = false
+var SoldiersShooted = []
 
 func SetMaxDefenders(value:int) -> void:
 	StaticMaxDefenders = value
@@ -68,6 +69,37 @@ func _ready():
 	RightShooter.SetDamage(300)
 	pass
 
+func _bullets_seen() -> Array:
+	var result := []
+	for ship in Subordinades:
+		result.append_array(ship.bulletsSeen)
+		pass
+	return result
+
+func _bullets_close_to_flag(bullets:Array) -> bool:
+	for bullet in bullets:
+		var pos := Vector2(int(bullet[1].x / BLOCKS_SIZE),int(bullet[1].y / BLOCKS_SIZE))
+		var distance = (pos - selfFlagPosition).length_squared()
+		if sqrt(distance) < DefensiveRatio:
+			return true
+		pass
+	return false
+
+func _soldier_shooted() -> Array:
+	for ship in Subordinades:
+		if ship.WasShooted() and not ship in SoldiersShooted:
+			SoldiersShooted.append(ship)
+			pass
+		pass
+	var i = 0
+	while i < SoldiersShooted.size():
+		if not SoldiersShooted[i].WasShooted():
+			SoldiersShooted.pop_at(i)
+			continue
+		i += 1
+		pass
+	return SoldiersShooted
+
 func _is_under_attack(enemys) -> bool:
 	for enemy in enemys:
 		var pos = Vector2(int(enemy.global_position.x / BLOCKS_SIZE),int(enemy.global_position.y / BLOCKS_SIZE))
@@ -99,7 +131,7 @@ func _flag_in_target_pos(enemys) -> bool:
 	return FlagInTargetPos
 
 func _search_flag():
-	if SectorSeen:
+	if SectorSeen and not FlagFound:
 		var ready = false
 		var i = 0
 		while i < SectorsToExplore.size():
@@ -239,6 +271,7 @@ func _update_perception(enemys):
 		if ship.EnemyFlagFound:
 			FlagFound = true
 			EnemyFlagPos = ship.EnemyFlagPosition
+			CurrentSectorToExplore = EnemyFlagPos
 			pass
 		pass
 	var percep = CommanderPerception.new()
@@ -246,7 +279,17 @@ func _update_perception(enemys):
 	percep.setUnderAttack(_is_under_attack(enemys))
 	percep.setFlagInTargetPos(_flag_in_target_pos(enemys))
 	percep.setEnemys(enemys)
+	percep.setSoldiersShooted(_soldier_shooted())
+	var bullets = _bullets_seen()
+	percep.setBullets(bullets)
+	percep.setBulletCloseToFlag(_bullets_close_to_flag(bullets))
 	EXECUTE(AgentBrain.ACTION(percep))
+	if Subordinades.size() <= StaticMaxDefenders and StaticMaxDefenders > 0:
+		StaticMaxDefenders -= 1
+		pass
+	if Subordinades.size() <= StaticMaxSeekers and StaticMaxSeekers > 1:
+		StaticMaxSeekers -= 1
+		pass
 	pass
 
 func _physics_process(delta):

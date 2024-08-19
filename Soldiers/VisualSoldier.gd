@@ -29,6 +29,7 @@ var OFFSET_POSITION = Vector2()
 var VISION_SCALE = 300
 var PerceptionLatency = 1
 var PerceptionRate = 0
+var Active = false
 
 # Control variables
 var selfFlagPosition = Vector2()
@@ -43,19 +44,29 @@ var AutoDefendingIn = false
 var LifePoints = 0
 var EnemyFlagFound = false
 var EnemyFlagPosition = Vector2()
+var bulletsSeen := []
+var Shooted = false
+var ShootedTimer = 500
+var CurrentShootedTime = ShootedTimer
 
 # Methods for the game
 
 func _ready():
 	pass
 
+func WasShooted() -> bool:
+	return Shooted
+
 func SetSaveDistance(distance) -> void:
 	SaveDistance = distance
 	pass
 
 func Destroy(damage: int) -> void:
+	Shooted = true
+	CurrentShootedTime = ShootedTimer
 	Core.ApplyDamage(damage)
 	if Core.LifePoints <= 0:
+		Shooted = false
 		var explosion = Explosion.instance()
 		explosion.global_position = global_position
 		get_tree().current_scene.AddExplosion(explosion)
@@ -330,6 +341,12 @@ func GetBussyCells():
 	return result
 
 func _physics_process(delta):
+	if CurrentShootedTime > 0:
+		CurrentShootedTime -= 1
+		pass
+	else:
+		Shooted = false
+		pass
 	Core.Health(1)
 	if PerceptionRate == PerceptionLatency:
 		See()
@@ -359,15 +376,18 @@ func _on_VisualSoldier_area_entered(area):
 		SetTargetPosition(TargetPosition)
 		GameMap.FreeBussyCells(bussy_cells)
 		pass
-	if area.ID == IDS.FlagID and not area.TEAM == TEAM:
-		EnemyFlagFound = true
-		EnemyFlagPosition = Vector2(int(area.global_position.x / BLOCKS_SIZE),int(area.global_position.y / BLOCKS_SIZE))
-		pass
 	pass
 
 func _on_ShipRadar_ShipDetected(ship):
 	if not ship == self and not ship == soldierItem and not ship.TEAM == TEAM and not ship.ID == IDS.BulletID:
 		EnemysSeen.append(ship)
+		pass
+	if not ship == self and not ship == soldierItem and ship.ID == IDS.BulletID:
+		bulletsSeen.append([ship,ship.global_position])
+		pass
+	if ship.ID == IDS.FlagID and not ship.TEAM == TEAM:
+		EnemyFlagFound = true
+		EnemyFlagPosition = Vector2(int(ship.global_position.x / BLOCKS_SIZE),int(ship.global_position.y / BLOCKS_SIZE))
 		pass
 	pass # Replace with function body.
 
@@ -375,6 +395,13 @@ func _on_ShipRadar_ShipRadarExited(ship):
 	if ship in EnemysSeen:
 		var index = EnemysSeen.find(ship)
 		EnemysSeen.pop_at(index)
+		pass
+	else:
+		for i in range(bulletsSeen.size()):
+			if bulletsSeen[i][0] == ship:
+				bulletsSeen.pop_at(i)
+				break
+			pass
 		pass
 	pass # Replace with function body.
 

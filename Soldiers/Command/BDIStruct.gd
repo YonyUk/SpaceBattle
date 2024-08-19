@@ -15,19 +15,33 @@ var datas = {
 	'get_flag':false,
 	'attack':false,
 	'defend':false,
-	'enemys_seen':false
+	'enemys_seen':false,
+	'enemy_close':false,
+	'bullet_seen':false,
+	'soldier_shooted':false,
+	'bullet_close':false
 }
 
-var beliefs = ['flag_found','under_attack','flag_in_target_pos','enemys_seen']
+var beliefs = ['flag_found','under_attack','flag_in_target_pos','enemys_seen','enemy_close']
 var desires = ['find_flag','capture_flag','defend_flag','cover_space','gain_supremacy']
 var intentions = ['search_flag','get_flag','attack','defend']
+var perceptions = ['bullet_seen','soldier_shooted','bullet_close']
+
+var beliefs_rules_generator = {
+	'bullet_seen':
+		['enemy_close'],# se refiere a un enemigo cerca de alguna de las naves
+	'soldier_shooted':
+		['enemy_close','flag_in_target_pos','enemys_seen'],
+	# se refiere a balas cerca de la bandera
+	'bullet_close':['under_attack']
+}
 
 var desires_rules = {
 	'find_flag':[
 		['!flag_found','!under_attack']
 	],
 	'capture_flag':[
-		['flag_found','get_flag'],
+		['flag_found'],
 		['flag_in_target_pos','!defend']
 	],
 	'defend_flag':[
@@ -35,18 +49,18 @@ var desires_rules = {
 	],
 	'cover_space':[
 		['!under_attack','search_flag'],
-		['!defend']
+		['!defend'],
+		['enemy_close']
 	],
 	'gain_supremacy':[
 		['!under_attack','enemys_seen'],
-		['!defend','enemys_seen'],
-		['!search_flag','!get_flag','enemys_seen']
+		['!search_flag','!get_flag','!defend','enemys_seen']
 	]
 }
 
 var intentions_rules = {
 	'search_flag':[
-		['!under_attack','find_flag','!defend']
+		['!under_attack','find_flag']
 	],
 	'get_flag':[
 		['flag_in_target_pos','capture_flag'],
@@ -54,9 +68,8 @@ var intentions_rules = {
 		['flag_in_target_pos','!defend']
 	],
 	'attack':[
-		['!defend','!under_attack','enemys_seen'],
+		['!under_attack','enemys_seen'],
 		['!under_attack','gain_supremacy'],
-		['!defend','gain_supremacy']
 	],
 	'defend':[
 		['under_attack'],
@@ -69,6 +82,17 @@ var priorities = ['defend','get_flag','attack','search_flag']
 var Beliefs = []
 var Desires = []
 var Intentions = []
+
+func _brf() -> void:
+	for perception in perceptions:
+		if datas[perception]:
+			var new_beliefs = beliefs_rules_generator[perception]
+			for bel in new_beliefs:
+				datas[bel] = true
+				pass
+			pass
+		pass
+	pass
 
 func eval_predicate(predicate:String):
 	if predicate[0] == '!':
@@ -120,17 +144,14 @@ func BRF(perception:CommanderPerception) -> Array:
 	datas['under_attack'] = perception.UnderAttack()
 	datas['flag_in_target_pos'] = perception.FlagInTargetPos()
 	datas['enemys_seen'] = perception.EnemysSeen()
-	if perception.FlagFound():
-		result.append('flag_found')
-		pass
-	if perception.UnderAttack():
-		result.append('under_attack')
-		pass
-	if perception.FlagInTargetPos():
-		result.append('flag_in_target_pos')
-		pass
-	if perception.EnemysSeen():
-		result.append('enemys_seen')
+	datas['bullet_seen'] = perception.BulletsSeen()
+	datas['soldier_shooted'] = perception.ShootedSoldiers()
+	datas['bullet_close'] = perception.BulletCloseToFlag()
+	_brf()
+	for bel in beliefs:
+		if datas[bel]:
+			result.append(bel)
+			pass
 		pass
 	return result
 
@@ -164,6 +185,9 @@ func ACTION(perception:CommanderPerception) -> String:
 	Desires = OPTIONS()
 	Intentions = SELECT()
 	return FILTER()
+
+func enemy_close() -> bool:
+	return datas['enemy_close']
 
 func enemys_seen() -> bool:
 	return datas['enemys_seen']
