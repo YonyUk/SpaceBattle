@@ -202,6 +202,8 @@ func GenerateCommander(team:String,defensive_ratio: int,max_defenders:int,max_se
 		pass
 	elif team == IDS.EnemyTeam:
 		commander = EnemyCommanderInstancer.instance()
+		commander.SetMaxDefenders(max_defenders)
+		commander.SetMaxSeekers(max_seekers)
 		EnemyCommander = commander
 		pass
 	commander.SetSaveDistance(SoldiersSaveDistance)

@@ -77,11 +77,25 @@ var intentions_rules = {
 	]
 }
 
+var cached_predicates = {}
+
 var priorities = ['defend','get_flag','attack','search_flag']
 
 var Beliefs = []
 var Desires = []
 var Intentions = []
+
+func _init():
+	for belief in beliefs:
+		cached_predicates[belief] = funcref(self,belief)
+		pass
+	for desire in desires:
+		cached_predicates[desire] = funcref(self,desire)
+		pass
+	for intention in intentions:
+		cached_predicates[intention] = funcref(self,intention)
+		pass
+	pass
 
 func _brf() -> void:
 	for perception in perceptions:
@@ -97,10 +111,8 @@ func _brf() -> void:
 func eval_predicate(predicate:String):
 	if predicate[0] == '!':
 		predicate = predicate.substr(1)
-		var function = funcref(self,predicate)
-		return not function.call_func()
-	var function = funcref(self,predicate)
-	return function.call_func()
+		return not cached_predicates[predicate].call_func()
+	return cached_predicates[predicate].call_func()
 
 func eval_desire_conditions(desire:String) -> bool:
 	var conditions = desires_rules[desire]
