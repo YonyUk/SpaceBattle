@@ -13,6 +13,17 @@ var DeductionRules = {
 	"Attacking":["!AutoDefending,See"]
 }
 
+var CachedPredicates = {}
+
+var PredicatesCaller = {}
+
+func _init():
+	for value in DeductionRules.keys():
+		CachedPredicates[value] = GetFuncRerences(DeductionRules[value])
+		PredicatesCaller[value] = funcref(self,value)
+		pass
+	pass
+
 # gets the func references for all the functions named in the deduction rule
 func GetFuncRerences(predicates:Array) -> Dictionary:
 	var result_conditions = []
@@ -53,32 +64,25 @@ func EvalPredicates(perception:SoldierAgentPerception,conditions:Array) -> bool:
 	return false
 
 func AutoDefending(perception:SoldierAgentPerception) -> bool:
-	var predicates = GetFuncRerences(DeductionRules['AutoDefending'])
-	return EvalPredicates(perception,predicates)
+	return EvalPredicates(perception,CachedPredicates['AutoDefending'])
 
 func Defending(perception:SoldierAgentPerception) -> bool:
-	var predicates = GetFuncRerences(DeductionRules['Defending'])
-	return EvalPredicates(perception,predicates)
+	return EvalPredicates(perception,CachedPredicates['Defending'])
 
 func Moving(perception:SoldierAgentPerception) -> bool:
-	var predicates = GetFuncRerences(DeductionRules['Moving'])
-	return EvalPredicates(perception,predicates)
+	return EvalPredicates(perception,CachedPredicates['Moving'])
 
 func CanShoot(perception:SoldierAgentPerception) -> bool:
-	var predicates = GetFuncRerences(DeductionRules['CanShoot'])
-	return EvalPredicates(perception,predicates)
+	return EvalPredicates(perception,CachedPredicates['CanShoot'])
 
 func CanRotate(perception:SoldierAgentPerception) -> bool:
-	var predicates = GetFuncRerences(DeductionRules['CanRotate'])
-	return EvalPredicates(perception,predicates)
+	return EvalPredicates(perception,CachedPredicates['CanRotate'])
 
 func CanHide(perception:SoldierAgentPerception) -> bool:
-	var predicates = GetFuncRerences(DeductionRules['CanHide'])
-	return EvalPredicates(perception,predicates)
+	return EvalPredicates(perception,CachedPredicates['CanHide'])
 
 func Attacking(perception:SoldierAgentPerception) -> bool:
-	var predicates = GetFuncRerences(DeductionRules['Attacking'])
-	return EvalPredicates(perception,predicates)
+	return EvalPredicates(perception,CachedPredicates['Attacking'])
 
 func LowLifePoints(perception:SoldierAgentPerception) -> bool:
 	return perception.LifePoints < perception.LowLimitLifePoints
@@ -100,9 +104,8 @@ func See(perception:SoldierAgentPerception) -> bool:
 
 # makes the reasoning procedure
 func SoldierReasoning(perception:SoldierAgentPerception) -> SoldierAgentPerception:
-	for predicate in DeductionRules.keys():
-		var func_ref = funcref(self,predicate)
-		perception.SelfState.SetProperty(predicate,func_ref.call_func(perception))
+	for predicate in PredicatesCaller.keys():
+		perception.SelfState.SetProperty(predicate,PredicatesCaller[predicate].call_func(perception))
 		pass
 	return perception
 

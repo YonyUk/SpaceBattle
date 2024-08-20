@@ -22,14 +22,16 @@ var COLUMN_SECTORS = 10
 var SECTORS_DIMENTIONS = 10
 var BLOCK_SIZE = 46
 var OFFSET_POSITION = Vector2(BLOCK_SIZE / 2,BLOCK_SIZE / 2)
-var MAX_SOLDIERS = 7
-var VisionRange = 350
+var MAX_SOLDIERS = 13
+var VisionRange = 300
 var PerceptionLatency = 10
 var CommanderLatency = 800
-var UserDefensiveRatio = 500
+var UserDefensiveRatio = 35
 var SoldiersLifePoints = 1000
+var SoldierSaveDistance = 150
+var MaxDefenders = 5
+var MaxSeekers = 5
 var SoldiersLowLimitsLifePoints = int(SoldiersLifePoints / 3)
-var SoldierSaveDistance = 100
 var FriendlyFire = false
 var Player = null
 var BackGround = null
@@ -98,7 +100,7 @@ func GenerateSoldiers():
 	pass
 
 func GenerateCommanders() -> void:
-	UserCommander = game_engine.GenerateCommander(IDS.UserTeam,UserDefensiveRatio)
+	UserCommander = game_engine.GenerateCommander(IDS.UserTeam,UserDefensiveRatio,MaxDefenders,MaxSeekers)
 	add_child(UserCommander)
 	UserCommander.SetMapLimits(GetMapLimits())
 	UserCommander.SetPerceptionLatency(PerceptionLatency)
@@ -106,7 +108,7 @@ func GenerateCommanders() -> void:
 	UserCommander.SetVisionRange(VisionRange)
 	UserCommander.SetReasoningLatency(CommanderLatency)
 	
-	EnemyCommander = game_engine.GenerateCommander(IDS.EnemyTeam,UserDefensiveRatio)
+	EnemyCommander = game_engine.GenerateCommander(IDS.EnemyTeam,UserDefensiveRatio,MaxDefenders,MaxSeekers)
 	add_child(EnemyCommander)
 	EnemyCommander.SetMapLimits(GetMapLimits())
 	EnemyCommander.SetPerceptionLatency(PerceptionLatency)
@@ -148,7 +150,7 @@ func ExportMaps(maps: int) -> void:
 	pass
 
 func _ready():
-#	var size = game_engine.LoadMap('SavedMaps/map14.json')
+#	var size = game_engine.LoadMap('SavedMaps/map10.json')
 #	COLUMN_SECTORS = size[0]
 #	ROW_SECTORS = size[1]
 	# setting up the game_engine

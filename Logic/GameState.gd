@@ -37,9 +37,9 @@ func SetFlagLocation(team: String, pos: Vector2) -> void:
 
 # sets the team and its ships
 func SetTeam(team: String, ships: Array) -> void:
-	if not team in Teams.keys():
-		Teams[team] = ships
-		pass
+	Teams[team] = ships
+	ShipsPositionsAssigned = {}
+	ShipsStateAssigned = {}
 	pass
 
 # the average distance from a team to its flag

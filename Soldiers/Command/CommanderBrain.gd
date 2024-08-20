@@ -329,6 +329,10 @@ func TransitionFunctionCost(state:GameState) -> float:
 
 # AStar for the strategy
 func GetStrategy(team:String) -> GameState:
+	if MinShipsDefenders + MinShipsSeekerCount > Allys.size():
+		MinShipsDefenders = int(Allys.size() / 2)
+		MinShipsSeekerCount = Allys.size() - MinShipsDefenders
+		pass
 	for ship in Allys:
 		var discrete_position = Vector2(int(ship.global_position.x / BlocksSize), int(ship.global_position.y / BlocksSize))
 		InternalGameState.AssignPositionToShip(ship,discrete_position)
