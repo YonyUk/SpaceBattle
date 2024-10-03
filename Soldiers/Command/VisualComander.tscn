@@ -29,6 +29,7 @@ position = Vector2( 0, -25 )
 [node name="ShipRadar" parent="." instance=ExtResource( 3 )]
 
 [node name="ShootingTimer" type="Timer" parent="."]
+wait_time = 0.65
 
 [connection signal="area_entered" from="." to="." method="_on_VisualComander_area_entered"]
 [connection signal="body_entered" from="." to="." method="_on_VisualComander_body_entered"]

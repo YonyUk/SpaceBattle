@@ -9,6 +9,8 @@ var bulletCloseToFlag = false
 var SoldiersShooted = []
 var Enemys = []
 var Bullets = []
+var EnemyPositions = []
+var stack_size = 20
 
 func setBulletCloseToFlag(value:bool) -> void:
 	bulletCloseToFlag = value
@@ -24,7 +26,25 @@ func setBullets(bullets: Array) -> void:
 
 func setEnemys(enemys: Array) -> void:
 	Enemys = enemys
+	for enemy in enemys:
+		EnemyPositions.push_front(enemy)
+		pass
+	while EnemyPositions.size() > stack_size:
+		EnemyPositions.pop_back()
+		pass
 	pass
+
+func _compute_distance_average_bettwen_enemys(pos:Vector2) -> float:
+	var result = 0
+	for en in EnemyPositions:
+		if en == pos: continue
+		var distance = (pos - en).length_squared()
+		result += distance
+		pass
+	return result / (EnemyPositions.size() - 1)
+
+func _compute_distance_to_flag(enemy,pos:Vector2) -> float:
+	return sqrt((pos - enemy.global_position).length_squared())
 
 func setFlagInTargetPos(value:bool) -> void:
 	flagInTargetPos = value
