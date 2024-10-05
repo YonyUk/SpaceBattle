@@ -13,7 +13,9 @@ onready var soldiersInstancer = preload("res://Soldiers/VisualSoldier.tscn")
 onready var userCommanderInstancer = preload("res://Soldiers/Command/VisualComander.tscn")
 onready var enemyCommanderInstancer = preload("res://Soldiers/Command/VisualEnemyCommander.tscn")
 onready var FlagInstancer = preload("res://Flags/Flag.tscn")
+onready var BackGround = $BackGround
 
+var SIMULATION_STARTED = false
 var game_engine = GameEngine.new()
 var WIDTH = 0
 var HEIGHT = 0
@@ -31,10 +33,11 @@ var SoldiersLifePoints = 1000
 var SoldierSaveDistance = 200
 var MaxDefenders = 5
 var MaxSeekers = 5
+var EnemyMaxDefenders = 5
+var EnemyMaxSeekers = 5
 var SoldiersLowLimitsLifePoints = int(SoldiersLifePoints / 3)
 var FriendlyFire = false
 var Player = null
-var BackGround = null
 var UserSoldiers = []
 var EnemySoldiers = []
 var UserCommander = null
@@ -108,7 +111,7 @@ func GenerateCommanders() -> void:
 	UserCommander.SetVisionRange(VisionRange)
 	UserCommander.SetReasoningLatency(CommanderLatency)
 	
-	EnemyCommander = game_engine.GenerateCommander(IDS.EnemyTeam,UserDefensiveRatio,MaxDefenders,MaxSeekers)
+	EnemyCommander = game_engine.GenerateCommander(IDS.EnemyTeam,UserDefensiveRatio,EnemyMaxDefenders,EnemyMaxSeekers)
 	add_child(EnemyCommander)
 	EnemyCommander.SetMapLimits(GetMapLimits())
 	EnemyCommander.SetPerceptionLatency(PerceptionLatency)
@@ -154,31 +157,17 @@ func _ready():
 #	COLUMN_SECTORS = size[0]
 #	ROW_SECTORS = size[1]
 	# setting up the game_engine
-	game_engine.SetSoldierSaveDistance(SoldierSaveDistance)
-	game_engine.SetMapParameters(BLOCK_SIZE,OFFSET_POSITION)
-	game_engine.SetSoldiersLifePoints(SoldiersLifePoints)
-	game_engine.SetSoldiersLowLimitLifePoints(SoldiersLowLimitsLifePoints)
-	game_engine.SetEnemyInstancer(enemyInstancer)
-	game_engine.SetSoldierInstancer(soldiersInstancer)
-	game_engine.SetMaxSoldiers(MAX_SOLDIERS)
-	game_engine.SetColumnSectors(COLUMN_SECTORS)
-	game_engine.SetRowSectors(ROW_SECTORS)
-	game_engine.SetSectorsDimentions(SECTORS_DIMENTIONS)
-	game_engine.SetPerceptionLatency(PerceptionLatency)
-	game_engine.SetVisionRange(VisionRange)
-	game_engine.SetUserCommanderInstancer(userCommanderInstancer)
-	game_engine.SetEnemyCommanderInstancer(enemyCommanderInstancer)
-	game_engine.SetFlagInstancer(FlagInstancer)
-	BackGround = backgroundInstancer.instance()
-	add_child(BackGround)
-	DrawMap()
-	SetFlags()
-	GenerateSoldiers()
-	SetPlayer()
+	
+	var screen = get_viewport_rect()
+	var bg_position = Vector2(screen.size.x / 2,screen.size.y / 2)
+	BackGround.global_position = bg_position
+	ConfigSimulation()
 	pass
 
 func _physics_process(delta):
-	BackGround.position = Player.position
+	if Player and SIMULATION_STARTED:
+		BackGround.position = Player.position
+		pass
 	pass
 
 func DrawMap():
@@ -197,3 +186,63 @@ func DrawMap():
 			pass
 		pass
 	pass
+
+func Set_Simulation_Parameters() -> void:
+	ROW_SECTORS = $WindowDialog/ROW_SECTORS.value
+	COLUMN_SECTORS = $WindowDialog/COLUMN_SECTORS.value
+	SECTORS_DIMENTIONS = $WindowDialog/SECTORS_COUNT.value
+	MAX_SOLDIERS = $WindowDialog/SOLDIERS.value
+	VisionRange = $WindowDialog/VISION_RANGE.value
+	PerceptionLatency = $WindowDialog/SOLDIER_LATENCY.value
+	CommanderLatency = $WindowDialog/COMMANDER_LATENCY.value
+	UserDefensiveRatio = $WindowDialog/SAVE_DISTANCE.value
+	SoldiersLifePoints = $WindowDialog/LIFE_POINTS.value
+	SoldierSaveDistance = $WindowDialog/SAVE_DISTANCE_SOLDIERS.value
+	MaxDefenders = $WindowDialog/MAX_DEFENDERS.value
+	MaxSeekers = $WindowDialog/MAX_SEEKERS.value
+	EnemyMaxDefenders = $WindowDialog/ENEMY_MAX_DEFENDERS.value
+	EnemyMaxSeekers = $WindowDialog/ENEMY_MAX_SEEKERS.value
+	pass
+
+func StartSimulation() -> void:
+	SIMULATION_STARTED = true
+	game_engine.SetSoldierSaveDistance(SoldierSaveDistance)
+	game_engine.SetMapParameters(BLOCK_SIZE,OFFSET_POSITION)
+	game_engine.SetSoldiersLifePoints(SoldiersLifePoints)
+	game_engine.SetSoldiersLowLimitLifePoints(SoldiersLowLimitsLifePoints)
+	game_engine.SetEnemyInstancer(enemyInstancer)
+	game_engine.SetSoldierInstancer(soldiersInstancer)
+	game_engine.SetMaxSoldiers(MAX_SOLDIERS)
+	game_engine.SetColumnSectors(COLUMN_SECTORS)
+	game_engine.SetRowSectors(ROW_SECTORS)
+	game_engine.SetSectorsDimentions(SECTORS_DIMENTIONS)
+	game_engine.SetPerceptionLatency(PerceptionLatency)
+	game_engine.SetVisionRange(VisionRange)
+	game_engine.SetUserCommanderInstancer(userCommanderInstancer)
+	game_engine.SetEnemyCommanderInstancer(enemyCommanderInstancer)
+	game_engine.SetFlagInstancer(FlagInstancer)
+	DrawMap()
+	SetFlags()
+	GenerateSoldiers()
+	SetPlayer()
+	pass
+
+func ConfigSimulation() -> void:
+	$WindowDialog.show()
+	$WindowDialog.popup_centered()
+	pass
+
+func ClearScene() -> void:
+	var nodes_to_keep = [BackGround,$MainCamera,$WindowDialog]
+	for child in get_children():
+		if not child in nodes_to_keep:
+			child.queue_free()
+			pass
+		pass
+	pass
+
+func _on_WindowDialog_start():
+	SIMULATION_STARTED = true
+	Set_Simulation_Parameters()
+	StartSimulation()
+	pass # Replace with function body.

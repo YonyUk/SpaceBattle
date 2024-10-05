@@ -1,0 +1,270 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://UI/SimulationStarterWindow.gd" type="Script" id=1]
+
+[node name="SimulationStarterWindow" type="WindowDialog"]
+margin_left = 2.0
+margin_top = 20.0
+margin_right = 692.0
+margin_bottom = 510.0
+script = ExtResource( 1 )
+
+[node name="ROW_SECTORS" type="SpinBox" parent="."]
+margin_left = 20.0
+margin_top = 60.0
+margin_right = 94.0
+margin_bottom = 84.0
+min_value = 5.0
+max_value = 20.0
+value = 5.0
+
+[node name="rows" type="RichTextLabel" parent="ROW_SECTORS"]
+margin_left = 10.0
+margin_top = -24.0
+margin_right = 50.0
+margin_bottom = -7.0
+text = "ROWS"
+
+[node name="ENEMY_MAX_DEFENDERS" type="SpinBox" parent="."]
+margin_left = 75.0
+margin_top = 370.0
+margin_right = 149.0
+margin_bottom = 394.0
+min_value = 2.0
+max_value = 35.0
+value = 5.0
+
+[node name="defenders" type="RichTextLabel" parent="ENEMY_MAX_DEFENDERS"]
+margin_left = -53.0
+margin_top = -24.0
+margin_right = 108.0
+margin_bottom = -7.0
+text = "MAX ENEMY DEFENDERS"
+
+[node name="ENEMY_MAX_SEEKERS" type="SpinBox" parent="."]
+margin_left = 266.0
+margin_top = 370.0
+margin_right = 340.0
+margin_bottom = 394.0
+min_value = 2.0
+max_value = 35.0
+value = 5.0
+
+[node name="seekers" type="RichTextLabel" parent="ENEMY_MAX_SEEKERS"]
+margin_left = -38.0
+margin_top = -24.0
+margin_right = 96.0
+margin_bottom = -7.0
+text = "MAX ENEMY SEEKERS"
+
+[node name="MAX_DEFENDERS" type="SpinBox" parent="."]
+margin_left = 440.0
+margin_top = 370.0
+margin_right = 514.0
+margin_bottom = 394.0
+min_value = 2.0
+max_value = 35.0
+value = 5.0
+
+[node name="defenders" type="RichTextLabel" parent="MAX_DEFENDERS"]
+margin_left = -25.0
+margin_top = -24.0
+margin_right = 85.0
+margin_bottom = -7.0
+text = "MAX DEFENDERS"
+
+[node name="MAX_SEEKERS" type="SpinBox" parent="."]
+margin_left = 574.0
+margin_top = 370.0
+margin_right = 648.0
+margin_bottom = 394.0
+min_value = 2.0
+max_value = 35.0
+value = 5.0
+
+[node name="seekers" type="RichTextLabel" parent="MAX_SEEKERS"]
+margin_left = -16.0
+margin_top = -24.0
+margin_right = 70.0
+margin_bottom = -7.0
+text = "MAX SEEKERS"
+
+[node name="COLUMN_SECTORS" type="SpinBox" parent="."]
+margin_left = 196.0
+margin_top = 60.0
+margin_right = 270.0
+margin_bottom = 84.0
+min_value = 5.0
+max_value = 20.0
+value = 5.0
+
+[node name="columns" type="RichTextLabel" parent="COLUMN_SECTORS"]
+margin_left = -1.0
+margin_top = -21.0
+margin_right = 78.0
+margin_bottom = -4.0
+text = "COLUMNS"
+
+[node name="SECTORS_COUNT" type="SpinBox" parent="."]
+margin_left = 402.0
+margin_top = 60.0
+margin_right = 476.0
+margin_bottom = 84.0
+min_value = 5.0
+max_value = 20.0
+value = 5.0
+
+[node name="sectors" type="RichTextLabel" parent="SECTORS_COUNT"]
+margin_left = 2.0
+margin_top = -24.0
+margin_right = 65.0
+margin_bottom = -7.0
+text = "SECTORS"
+
+[node name="SOLDIERS" type="SpinBox" parent="."]
+margin_left = 593.0
+margin_top = 60.0
+margin_right = 667.0
+margin_bottom = 84.0
+min_value = 5.0
+max_value = 20.0
+value = 5.0
+
+[node name="soldiers" type="RichTextLabel" parent="SOLDIERS"]
+margin_left = -2.0
+margin_top = -24.0
+margin_right = 77.0
+margin_bottom = -7.0
+text = "SOLDIERS"
+
+[node name="VISION_RANGE" type="SpinBox" parent="."]
+margin_left = 408.0
+margin_top = 240.0
+margin_right = 482.0
+margin_bottom = 264.0
+min_value = 300.0
+max_value = 1000.0
+step = 20.0
+value = 300.0
+
+[node name="range" type="RichTextLabel" parent="VISION_RANGE"]
+margin_left = -2.0
+margin_top = -24.0
+margin_right = 107.0
+margin_bottom = -7.0
+text = "VISION_RANGE"
+
+[node name="LIFE_POINTS" type="SpinBox" parent="."]
+margin_left = 137.0
+margin_top = 240.0
+margin_right = 211.0
+margin_bottom = 264.0
+min_value = 300.0
+max_value = 1000.0
+step = 20.0
+value = 300.0
+
+[node name="points" type="RichTextLabel" parent="LIFE_POINTS"]
+margin_left = -2.0
+margin_top = -24.0
+margin_right = 107.0
+margin_bottom = -7.0
+text = "LIFE POINTS"
+
+[node name="SOLDIER_LATENCY" type="SpinBox" parent="."]
+margin_left = 15.0
+margin_top = 170.0
+margin_right = 89.0
+margin_bottom = 194.0
+min_value = 10.0
+max_value = 60.0
+step = 10.0
+value = 20.0
+
+[node name="latency" type="RichTextLabel" parent="SOLDIER_LATENCY"]
+margin_left = -2.0
+margin_top = -24.0
+margin_right = 107.0
+margin_bottom = -7.0
+text = "S. LATENCY"
+
+[node name="COMMANDER_LATENCY" type="SpinBox" parent="."]
+margin_left = 137.0
+margin_top = 170.0
+margin_right = 211.0
+margin_bottom = 194.0
+min_value = 10.0
+max_value = 2000.0
+step = 20.0
+value = 1800.0
+
+[node name="latency" type="RichTextLabel" parent="COMMANDER_LATENCY"]
+margin_left = -2.0
+margin_top = -24.0
+margin_right = 107.0
+margin_bottom = -7.0
+text = "P. LATENCY"
+
+[node name="SAVE_DISTANCE" type="SpinBox" parent="."]
+margin_left = 318.0
+margin_top = 170.0
+margin_right = 392.0
+margin_bottom = 194.0
+min_value = 30.0
+max_value = 45.0
+value = 35.0
+
+[node name="distance" type="RichTextLabel" parent="SAVE_DISTANCE"]
+margin_left = -40.0
+margin_top = -24.0
+margin_right = 102.0
+margin_bottom = -7.0
+text = "SAVE DISTANCE FLAG"
+
+[node name="SAVE_DISTANCE_SOLDIERS" type="SpinBox" parent="."]
+margin_left = 523.0
+margin_top = 170.0
+margin_right = 597.0
+margin_bottom = 194.0
+min_value = 90.0
+max_value = 250.0
+step = 20.0
+value = 200.0
+
+[node name="distance" type="RichTextLabel" parent="SAVE_DISTANCE_SOLDIERS"]
+margin_left = -54.0
+margin_top = -23.0
+margin_right = 115.0
+margin_bottom = -6.0
+text = "SAVE DISTANCE SOLDIER"
+
+[node name="CONFIGURATION LABEL" type="RichTextLabel" parent="."]
+margin_left = 258.0
+margin_top = 8.0
+margin_right = 432.0
+margin_bottom = 28.0
+text = "WORLD CONFIGURATION"
+
+[node name="SHIPS CONFIGURATION" type="RichTextLabel" parent="."]
+margin_left = 267.0
+margin_top = 120.0
+margin_right = 421.0
+margin_bottom = 140.0
+text = "SHIPS CONFIGURATION"
+
+[node name="TEAMS CONFIGURATION" type="RichTextLabel" parent="."]
+margin_left = 270.0
+margin_top = 314.0
+margin_right = 433.0
+margin_bottom = 334.0
+custom_colors/default_color = Color( 0.145098, 0.521569, 0.972549, 1 )
+text = "TEAMS CONFIGURATION"
+
+[node name="START" type="Button" parent="."]
+margin_left = 303.0
+margin_top = 437.0
+margin_right = 390.0
+margin_bottom = 457.0
+text = "START"
+
+[connection signal="pressed" from="START" to="." method="_on_START_pressed"]

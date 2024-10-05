@@ -9,6 +9,7 @@ var IDS = AreasIDS.new()
 var ID = IDS.FlagID
 var TEAM = ''
 var COLOR = ''
+var LIFE = 9000
 
 var flagsItem = {}
 
