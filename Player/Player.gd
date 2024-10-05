@@ -17,6 +17,7 @@ var TEAM = "USER"
 var LastPosition = Vector2()
 var LastRotation = 0
 var OperatingSystem = null
+var InstructionsOn = false
 
 func _ready():
 	LastPosition = global_position
@@ -68,20 +69,33 @@ func _physics_process(delta):
 	
 	var rotating = false
 	
-	if Input.is_action_pressed("rotate_left"):
+	if Input.is_action_pressed("rotate_left") and not InstructionsOn:
 		$PlayerItem.rotation_degrees -= 3
 		rotating = true
 		pass
 	
-	if Input.is_action_pressed("rotate_right"):
+	if Input.is_action_pressed("rotate_right") and not InstructionsOn:
 		$PlayerItem.rotation_degrees += 5
 		rotating = true
 		pass
 	
-	if Input.is_action_just_pressed("shoot"):
+	if Input.is_action_just_pressed("shoot") and not InstructionsOn:
 		var bullet = Shooter.Shoot(TEAM)
 		bullet.rotation = playerItem.rotation
 		get_tree().current_scene.AddBullet(bullet)
+		pass
+
+	if Input.is_action_just_pressed("Instructions_Input"):
+		if InstructionsOn:
+			$Instructions.modulate.a = 0
+			$Button.modulate.a = 0
+			InstructionsOn = false
+			pass
+		else:
+			$Instructions.modulate.a = 0.7
+			$Button.modulate.a = 0.7
+			InstructionsOn = true
+			pass
 		pass
 
 # idea para implementar despues
@@ -90,4 +104,7 @@ func _physics_process(delta):
 		pass
 	LastPosition = global_position
 	#LastRotation = rotation
+	pass
+
+async func send_command():
 	pass

@@ -21,3 +21,18 @@ current = true
 [node name="PlayerItem" parent="." instance=ExtResource( 1 )]
 position = Vector2( 0, -4 )
 scale = Vector2( 0.03, 0.03 )
+
+[node name="Instructions" type="TextEdit" parent="."]
+modulate = Color( 1, 1, 1, 0 )
+margin_left = 26.6667
+margin_top = -82.0
+margin_right = 259.667
+margin_bottom = 48.0
+
+[node name="Button" type="Button" parent="."]
+modulate = Color( 1, 1, 1, 0 )
+margin_left = 33.3333
+margin_top = 56.6667
+margin_right = 94.3333
+margin_bottom = 76.6667
+text = "Command"

@@ -261,11 +261,6 @@ func MakeActions() -> void:
 		SetAttackTarget(null)
 		pass
 	
-	#AutoDefending
-	if Perception.AutoDefending():
-		SetTargetPosition(selfFlagPosition)
-		pass
-	
 	# Moving Actions
 	if Perception.Moving():
 		if Perception.Attacking():

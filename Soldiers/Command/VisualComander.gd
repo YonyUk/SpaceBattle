@@ -69,6 +69,7 @@ func _ready():
 	LeftShooter.SetDamage(300)
 	CenterShooter.SetDamage(300)
 	RightShooter.SetDamage(300)
+	exploredSectorDistance = BLOCKS_SIZE * SectorsCount
 	pass
 
 func _bullets_seen() -> Array:

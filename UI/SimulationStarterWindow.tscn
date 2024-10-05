@@ -3,6 +3,7 @@
 [ext_resource path="res://UI/SimulationStarterWindow.gd" type="Script" id=1]
 
 [node name="SimulationStarterWindow" type="WindowDialog"]
+visible = true
 margin_left = 2.0
 margin_top = 20.0
 margin_right = 692.0
