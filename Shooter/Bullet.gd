@@ -47,7 +47,7 @@ func _on_Bullet_body_entered(body):
 	pass # Replace with function body.
 
 func _on_Bullet_area_entered(area):
-	if area.ID == IDS.SoldierID:
+	if area.ID == IDS.SoldierID or area.ID == IDS.FlagID:
 		var friendly_fire = get_tree().current_scene.GetFriendlyFire()
 		var interact = false
 		if area.TEAM == TEAM and friendly_fire:

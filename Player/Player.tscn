@@ -24,15 +24,28 @@ scale = Vector2( 0.03, 0.03 )
 
 [node name="Instructions" type="TextEdit" parent="."]
 modulate = Color( 1, 1, 1, 0 )
-margin_left = 26.6667
-margin_top = -82.0
-margin_right = 259.667
-margin_bottom = 48.0
+margin_left = 24.0
+margin_top = -167.0
+margin_right = 434.0
+margin_bottom = 23.0
+wrap_enabled = true
 
 [node name="Button" type="Button" parent="."]
 modulate = Color( 1, 1, 1, 0 )
 margin_left = 33.3333
-margin_top = 56.6667
-margin_right = 94.3333
-margin_bottom = 76.6667
+margin_top = 34.6667
+margin_right = 110.333
+margin_bottom = 54.6667
 text = "Command"
+
+[node name="StopButton" type="Button" parent="."]
+modulate = Color( 1, 1, 1, 0 )
+margin_left = 149.333
+margin_top = 28.0
+margin_right = 226.333
+margin_bottom = 48.0
+text = "Stop"
+
+[connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]
+[connection signal="pressed" from="StopButton" to="." method="_on_Button_pressed"]
+[connection signal="pressed" from="StopButton" to="." method="_on_StopButton_pressed"]

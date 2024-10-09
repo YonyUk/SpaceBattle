@@ -21,7 +21,7 @@ var StaticMaxDefenders = 1
 var StaticMaxSeekers = 1
 var SectorsSeen = []
 var CurrentSectorToExplore = Vector2()
-var exploredSectorDistance = 450
+var exploredSectorDistance = 100
 var FlagFound = false
 var FlagInTargetPos = false
 var EnemyFlagPos = Vector2()
@@ -31,6 +31,11 @@ var SoldiersShooted = []
 var CurrentStrategy = null
 var ShipsJustJoined = false
 var ShipsStatesAssignatedCopy = {}
+var Defending = false
+var Attacking = false
+var Seeking = false
+var OnCapture = false
+var PositionToDefend = null
 
 func SetMaxDefenders(value:int) -> void:
 	StaticMaxDefenders = value
@@ -69,7 +74,10 @@ func _ready():
 	LeftShooter.SetDamage(300)
 	CenterShooter.SetDamage(300)
 	RightShooter.SetDamage(300)
-	exploredSectorDistance = BLOCKS_SIZE * SectorsCount
+	pass
+
+func SetExploredSectorDistance(value) -> void:
+	exploredSectorDistance = value
 	pass
 
 func _bullets_seen() -> Array:
@@ -192,7 +200,7 @@ func _count_enemys_by_sector(sectors:Array) -> Vector2:
 func _join_ships(strategy: GameState) -> bool:
 	if not strategy: return false
 	var ready = true
-	var sectors = _find_sectors_closer_to(CurrentSectorToExplore,8)
+	var sectors = _find_sectors_closer_to(CurrentSectorToExplore,16)
 	var sector = _count_enemys_by_sector(sectors)
 	for ship in strategy.ShipsPositionsAssigned.keys():
 		if strategy.ShipsStateAssigned[ship] == States.ShipStateSeeking:
@@ -237,11 +245,10 @@ func _copy_ship_states(strategy:GameState) -> void:
 func _defend_flag(strategy:GameState) -> void:
 	var ship_to_destroy = _ship_to_destroy(TotalEnemysSeen)
 	if ship_to_destroy:
-		for ship in ShipsStatesAssignatedCopy.keys():
-			if ShipsStatesAssignatedCopy[ship] == States.ShipStateDefend:
-				ship.SetAttackTarget(ship_to_destroy.global_position)
-				pass
-			pass
+		PositionToDefend = ship_to_destroy.global_position
+		pass
+	else:
+		PositionToDefend = null
 		pass
 	pass
 
@@ -273,6 +280,10 @@ func _attack() -> void:
 	pass
 
 func search_flag() -> void:
+	Defending = false
+	OnCapture = false
+	Seeking = true
+	Attacking = false
 	ShipsJustJoined = false
 	_search_flag()
 	ReasoningLatency = StaticReasoningLatency
@@ -284,9 +295,20 @@ func search_flag() -> void:
 	elif MinDefenders > StaticMinDefenders:
 		MinDefenders -= 1
 		pass
+	if CurrentStrategy:
+		for ship in CurrentStrategy.ShipsStateAssigned.keys():
+			if CurrentStrategy.ShipsStateAssigned[ship] == States.ShipStateSeeking:
+				ship.SetTargetPosition(CurrentSectorToExplore*BLOCKS_SIZE + OFFSET_POSITION)
+				pass
+			pass
+		pass
 	pass
 
 func get_flag() -> void:
+	Defending = false
+	OnCapture = true
+	Seeking = false
+	Attacking = false
 	if not ShipsJustJoined:
 		ShipsJustJoined = _join_ships(CurrentStrategy)
 		pass
@@ -303,11 +325,19 @@ func get_flag() -> void:
 	pass
 
 func attack() ->void:
+	Defending = false
+	OnCapture = false
+	Seeking = false
+	Attacking = true
 	_attack()
 	ReasoningLatency = int(StaticReasoningLatency / 2)
 	pass
 
 func defend() -> void:
+	Defending = true
+	OnCapture = false
+	Seeking = false
+	Attacking = false
 	_defend_flag(CurrentStrategy)
 	ShipsJustJoined = false
 	ReasoningLatency = int(StaticReasoningLatency / 2)
@@ -315,6 +345,13 @@ func defend() -> void:
 		MinSeekers -= 1
 		if MinDefenders < StaticMaxDefenders:
 			MinDefenders += 1
+			pass
+		pass
+	if CurrentStrategy and PositionToDefend:
+		for ship in CurrentStrategy.ShipsStateAssigned.keys():
+			if CurrentStrategy.ShipsStateAssigned[ship] == States.ShipStateDefend and PositionToDefend:
+				ship.SetTargetPosition(PositionToDefend)
+				pass
 			pass
 		pass
 	pass
@@ -370,7 +407,8 @@ func EXECUTE(action:String) -> void:
 
 func _update_perception() -> void:
 	for ship in Subordinades:
-		var distance = (ship.global_position - CurrentSectorToExplore*BLOCKS_SIZE + OFFSET_POSITION).length_squared()
+		var discrete_pos = Vector2(int(ship.global_position.x / BLOCKS_SIZE),int(ship.global_position.y / BLOCKS_SIZE))
+		var distance = (discrete_pos - CurrentSectorToExplore).length_squared()
 		if sqrt(distance) < exploredSectorDistance and not CurrentSectorToExplore in SectorsSeen:
 			SectorsSeen.append(CurrentSectorToExplore)
 			SectorSeen = true
@@ -432,13 +470,12 @@ func _physics_process(delta):
 		CurrentStrategy = StrategyBrain.GetStrategy(IDS.EnemyTeam)
 		_copy_ship_states(CurrentStrategy)
 		for ship in CurrentStrategy.ShipsPositionsAssigned.keys():
-			ship.SetTargetPosition(CurrentStrategy.ShipsPositionsAssigned[ship] * BLOCKS_SIZE + OFFSET_POSITION)
 			ship.SetSoldierState(CurrentStrategy.ShipsStateAssigned[ship])
 			ship.SetDefensiveDistance(DefensiveRatio)
 			pass
 		ReasoningTimer = 0
 		pass
-	else:
+	elif not Defending:
 		CommandeDefenders()
 		pass
 	ReasoningTimer += 1
@@ -468,6 +505,11 @@ func CommandeDefenders() -> void:
 			pass
 		pass
 	pass
+
+func DeffensiveOffensivePosition(pos:Vector2) -> Vector2:
+	var discrete_position = Vector2(int(pos.x / BLOCKS_SIZE),int(pos.y / BLOCKS_SIZE))
+	var new_pos = GameMap.GetFreeCellCloserTo(discrete_position)
+	return new_pos
 
 func _on_VisualComander_body_entered(body):
 	var bussy_cells = []

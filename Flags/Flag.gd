@@ -9,7 +9,7 @@ var IDS = AreasIDS.new()
 var ID = IDS.FlagID
 var TEAM = ''
 var COLOR = ''
-var LIFE = 9000
+var LIFE = 1000
 
 var flagsItem = {}
 
@@ -23,6 +23,13 @@ func _ready():
 
 func SetFlagItem(color: String) -> void:
 	COLOR = color
+	pass
+
+func Destroy(damage:int) -> void:
+	LIFE -= damage
+	if LIFE <= 0:
+		get_tree().current_scene.EndSimulation(TEAM)
+		pass
 	pass
 
 func SetTeam(team: String) -> void:

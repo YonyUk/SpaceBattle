@@ -234,12 +234,19 @@ func ConfigSimulation() -> void:
 
 func ClearScene() -> void:
 	var nodes_to_keep = [BackGround,$MainCamera,$WindowDialog]
+	EnemySoldiers.clear()
+	UserSoldiers.clear()
 	for child in get_children():
 		if not child in nodes_to_keep:
 			child.queue_free()
 			pass
 		pass
+	ConfigSimulation()
 	pass
+
+func EndSimulation(team):
+	print(team)
+	pass  
 
 func _on_WindowDialog_start():
 	SIMULATION_STARTED = true

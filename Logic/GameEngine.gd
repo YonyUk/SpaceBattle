@@ -111,26 +111,15 @@ func SetPerceptionLatency(latency:int) -> void:
 
 func SetRowSectors(rows:int) -> void:
 	ROW_SECTORS = rows
-	if SectorsCount == 0:
-		SectorsCount = rows * rows
-		pass
-	else:
-		SectorsCount = min(SectorsCount,rows * rows)
-		pass
 	pass
 
 func SetColumnSectors(columns:int) -> void:
 	COLUMN_SECTORS = columns
-	if SectorsCount == 0:
-		SectorsCount = columns * columns
-		pass
-	else:
-		SectorsCount = min(SectorsCount,columns * columns)
-		pass
 	pass
 
 func SetSectorsDimentions(dimentions:int) -> void:
 	SECTORS_DIMENTIONS = dimentions
+	SectorsCount = COLUMN_SECTORS * ROW_SECTORS
 	pass
 
 func SetMaxSoldiers(max_soldiers: int) -> void:
@@ -216,6 +205,7 @@ func GenerateCommander(team:String,defensive_ratio: int,max_defenders:int,max_se
 	commander.SetSectorsCount(SectorsCount)
 	commander.SetDefensiveRatio(defensive_ratio)
 	commander.SetTargetPosition(pos * BLOCKS_SIZE + OFFSET_POSITION)
+	commander.SetExploredSectorDistance(SECTORS_DIMENTIONS)
 	return commander
 
 func VisionCollide(from:Vector2,to:Vector2) -> bool:

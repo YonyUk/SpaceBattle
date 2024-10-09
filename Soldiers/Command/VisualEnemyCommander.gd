@@ -27,6 +27,7 @@ var SoldiersShooted = []
 var CurrentStrategy = null
 var ShipsJustJoined = false
 var ShipsStatesAssignatedCopy = {}
+var PositionToDefend = null
 
 func _ready():
 	soldierItem = $EnemyCommandItem
@@ -54,6 +55,10 @@ func _ready():
 	StrategyBrain.SetEnemys(IDS.UserTeam,enemys)
 	SetLifePoints(Core.LifePoints * 3)
 	Shooter.SetDamage(300)
+	pass
+
+func SetExploredSectorDistance(value) -> void:
+	exploredSectorDistance = value
 	pass
 
 func SetMaxDefenders(value:int) -> void:
@@ -184,7 +189,7 @@ func _count_enemys_by_sector(sectors:Array) -> Vector2:
 func _join_ships(strategy: GameState) -> bool:
 	if not strategy: return false
 	var ready = true
-	var sectors = _find_sectors_closer_to(CurrentSectorToExplore,8)
+	var sectors = _find_sectors_closer_to(CurrentSectorToExplore,16)
 	var sector = _count_enemys_by_sector(sectors)
 	for ship in strategy.ShipsPositionsAssigned.keys():
 		if strategy.ShipsStateAssigned[ship] == States.ShipStateSeeking:
@@ -222,11 +227,10 @@ func _ship_to_destroy(enemys):
 func _defend_flag() -> void:
 	var ship_to_destroy = _ship_to_destroy(TotalEnemysSeen)
 	if ship_to_destroy:
-		for ship in ShipsStatesAssignatedCopy.keys():
-			if ShipsStatesAssignatedCopy[ship] == States.ShipStateDefend:
-				ship.SetAttackTarget(ship_to_destroy.global_position)
-				pass
-			pass
+		PositionToDefend = ship_to_destroy.global_position
+		pass
+	else:
+		PositionToDefend = null
 		pass
 	pass
 
@@ -276,6 +280,13 @@ func search_flag() -> void:
 	elif MinDefenders > StaticMinDefenders:
 		MinDefenders -= 1
 		pass
+	if CurrentStrategy:
+		for ship in CurrentStrategy.ShipsStateAssigned.keys():
+			if CurrentStrategy.ShipsStateAssigned[ship] == States.ShipStateSeeking:
+				ship.SetTargetPosition(CurrentSectorToExplore*BLOCKS_SIZE + OFFSET_POSITION)
+				pass
+			pass
+		pass
 	pass
 
 func get_flag() -> void:
@@ -307,6 +318,13 @@ func defend() -> void:
 		MinSeekers -= 1
 		if MinDefenders < StaticMaxDefenders:
 			MinDefenders += 1
+			pass
+		pass
+	if CurrentStrategy and PositionToDefend:
+		for ship in CurrentStrategy.ShipsStateAssigned.keys():
+			if CurrentStrategy.ShipsStateAssigned[ship] == States.ShipStateDefend:
+				ship.SetTargetPosition(PositionToDefend)
+				pass
 			pass
 		pass
 	pass
@@ -405,7 +423,6 @@ func _physics_process(delta):
 		CurrentStrategy = StrategyBrain.GetStrategy(IDS.UserTeam)
 		_copy_ship_states(CurrentStrategy)
 		for ship in CurrentStrategy.ShipsPositionsAssigned.keys():
-			ship.SetTargetPosition(CurrentStrategy.ShipsPositionsAssigned[ship] * BLOCKS_SIZE + OFFSET_POSITION)
 			ship.SetSoldierState(CurrentStrategy.ShipsStateAssigned[ship])
 			ship.SetDefensiveDistance(DefensiveRatio)
 			pass

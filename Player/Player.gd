@@ -1,9 +1,9 @@
 extends KinematicBody2D
 
 onready var collisionDetector = $Collisioner
-
 onready var playerItem = $PlayerItem
 onready var Shooter = $PlayerItem/Shooter
+
 var Speed = 200
 var MoveDirection := Vector2()
 var LIMIT_X = 0
@@ -18,6 +18,7 @@ var LastPosition = Vector2()
 var LastRotation = 0
 var OperatingSystem = null
 var InstructionsOn = false
+var client = StreamPeerTCP.new()
 
 func _ready():
 	LastPosition = global_position
@@ -89,11 +90,14 @@ func _physics_process(delta):
 		if InstructionsOn:
 			$Instructions.modulate.a = 0
 			$Button.modulate.a = 0
+			$StopButton.modulate.a = 0
 			InstructionsOn = false
 			pass
 		else:
+			$Instructions.text = ''
 			$Instructions.modulate.a = 0.7
 			$Button.modulate.a = 0.7
+			$StopButton.modulate.a = 0.7
 			InstructionsOn = true
 			pass
 		pass
@@ -106,5 +110,32 @@ func _physics_process(delta):
 	#LastRotation = rotation
 	pass
 
-async func send_command():
-	pass
+func send_command() -> bool:
+	var err = client.connect_to_host('127.0.0.1',8000)
+	var msg = $Instructions.text
+	var bytes = JSON.print(msg)
+	if client.get_status() == StreamPeerTCP.STATUS_CONNECTED:
+		client.put_data(bytes.to_utf8())
+		while true:
+			var response_size = client.get_available_bytes()
+			if response_size > 0:
+				bytes = client.get_string(response_size)
+				msg = parse_json(bytes)
+				$Instructions.text = msg
+				break
+			pass
+		return true
+	client.disconnect_from_host()
+	return false
+
+
+func _on_Button_pressed():
+	var thread = Thread.new()
+	thread.start(self,'send_command')
+	pass # Replace with function body.
+
+
+func _on_StopButton_pressed():
+	get_tree().current_scene.Player = null
+	get_tree().current_scene.ClearScene()
+	pass # Replace with function body.

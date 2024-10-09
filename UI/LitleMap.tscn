@@ -1,0 +1,10 @@
+[gd_scene format=2]
+
+[node name="LitleMap" type="Node2D"]
+
+[node name="Container" type="Container" parent="."]
+margin_right = 1031.0
+margin_bottom = 592.0
+
+[node name="CanvasModulate" type="CanvasModulate" parent="Container"]
+color = Color( 0.239216, 0.223529, 0.223529, 1 )
