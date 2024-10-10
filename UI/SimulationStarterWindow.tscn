@@ -4,7 +4,6 @@
 [ext_resource path="res://Fonts/Font.tres" type="DynamicFont" id=2]
 
 [node name="SimulationStarterWindow" type="WindowDialog"]
-visible = true
 margin_left = 2.0
 margin_top = 20.0
 margin_right = 692.0
@@ -326,3 +325,4 @@ text = "Loop"
 [connection signal="file_selected" from="MapsLoader" to="." method="_on_MapsLoader_file_selected"]
 [connection signal="pressed" from="SaveResults" to="." method="_on_SaveResults_pressed"]
 [connection signal="pressed" from="OnLoop" to="." method="_on_OnLoop_pressed"]
+[connection signal="changed" from="OnLoop/on_loop_value" to="." method="_on_on_loop_value_changed"]

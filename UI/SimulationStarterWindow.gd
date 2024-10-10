@@ -3,6 +3,7 @@ extends WindowDialog
 signal start
 signal save_results
 signal loop(state)
+signal loop_count(count)
 
 var map = ''
 var MapLoad = false
@@ -39,4 +40,9 @@ func _on_OnLoop_pressed():
 	else:
 		$OnLoop/on_loop_value.editable = false
 		pass
+	pass # Replace with function body.
+
+
+func _on_on_loop_value_changed():
+	emit_signal("loop_count",$OnLoop/on_loop_value.value)
 	pass # Replace with function body.

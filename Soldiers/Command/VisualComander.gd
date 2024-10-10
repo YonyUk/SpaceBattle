@@ -81,6 +81,13 @@ func _ready():
 	RightShooter.SetDamage(300)
 	pass
 
+func Destroy(damage:int) -> void:
+	.Destroy(damage)
+	if Core.LifePoints <= 0:
+		get_tree().current_scene.EndSimulation(TEAM)
+		pass
+	pass
+
 func SetExploredSectorDistance(value) -> void:
 	exploredSectorDistance = value
 	pass

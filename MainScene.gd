@@ -172,7 +172,6 @@ func _ready():
 	pass
 
 func _physics_process(delta):
-	Count = $WindowDialog/OnLoop/on_loop_value.value
 	if Player and SIMULATION_STARTED:
 		EndSimulationLabel.rect_global_position = Player.global_position
 		if UserCommander and UserFlag:
@@ -270,6 +269,7 @@ func ClearScene() -> void:
 
 func EndSimulation(team):
 	EndSimulationLabel.text = 'End of Simulation\n'
+	EndSimulationLabel.text += 'Looser Team: ' + team
 	SimulationsResults['Simulation' + str(SimulationID)] = {
 		'SIZE': [ROW_SECTORS * SECTORS_DIMENTIONS,COLUMN_SECTORS*SECTORS_DIMENTIONS],
 		'SOLDIERS':MAX_SOLDIERS,
@@ -283,7 +283,7 @@ func EndSimulation(team):
 		'USER_MAX_SEEKERS':MaxSeekers,
 		'ENEMY_MAX_DEFENDERS':EnemyMaxDefenders,
 		'ENEMY_MAX_SEEKERS':EnemyMaxSeekers,
-		'WINNER_TEAM':team
+		'LOOSER_TEAM':team
 	}
 	SimulationID += 1
 	if Loop and Count > 0:
@@ -324,4 +324,9 @@ func _on_WindowDialog_save_results():
 
 func _on_WindowDialog_loop(state):
 	Loop = state
+	Count = $WindowDialog/OnLoop/on_loop_value.value
+	pass # Replace with function body.
+
+func _on_WindowDialog_loop_count(count):
+	Count = $WindowDialog/OnLoop/on_loop_value.value
 	pass # Replace with function body.

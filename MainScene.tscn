@@ -28,6 +28,7 @@ access = 2
 filters = PoolStringArray( "*.json" )
 
 [connection signal="loop" from="WindowDialog" to="." method="_on_WindowDialog_loop"]
+[connection signal="loop_count" from="WindowDialog" to="." method="_on_WindowDialog_loop_count"]
 [connection signal="save_results" from="WindowDialog" to="." method="_on_WindowDialog_save_results"]
 [connection signal="start" from="WindowDialog" to="." method="_on_WindowDialog_start"]
 [connection signal="file_selected" from="SaveResultsSimulations" to="." method="_on_SaveResultsSimulations_file_selected"]
