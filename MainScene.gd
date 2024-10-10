@@ -44,6 +44,7 @@ var UserCommander = null
 var EnemyCommander = null
 var IDS = AreasIDS.new()
 var FlagsTeams = {}
+var CameraScale = Vector2()
 
 func CurrentMap() -> Map:
 	return game_engine.GameMap
@@ -121,7 +122,10 @@ func GenerateCommanders() -> void:
 	pass
 
 func GetMapLimits():
-	return game_engine.GetMapLimits()
+	var MapSize = game_engine.GetMapLimits()
+	var screen_size = get_viewport().size
+	CameraScale = Vector2(float(MapSize.x / screen_size.x),float(MapSize.y / screen_size.y)) * 2
+	return MapSize
 
 func SetPlayer() -> void:
 	Player = playerInstancer.instance()
@@ -225,6 +229,7 @@ func StartSimulation() -> void:
 	SetFlags()
 	GenerateSoldiers()
 	SetPlayer()
+	Player.SetCameraScale(CameraScale)
 	pass
 
 func ConfigSimulation() -> void:

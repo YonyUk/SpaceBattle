@@ -28,6 +28,13 @@ func SetViewLimits(size: Vector2):
 	LIMIT_X = size.x
 	LIMIT_Y = size.y
 	Shooter.SetMapLimits(size)
+	var scale_x = LIMIT_X / 575
+	var scale_y = LIMIT_Y / 575
+	$PlayerCamera.scale = Vector2(scale_x,scale_y)
+	pass
+
+func SetCameraScale(vector:Vector2) -> void:
+	$PlayerCamera.scale = vector
 	pass
 
 func SetGameParameters(blocks_size: int, offset_positions: Vector2,map:Map):
