@@ -1,6 +1,8 @@
 extends WindowDialog
 
 signal start
+signal save_results
+signal loop(state)
 
 var map = ''
 var MapLoad = false
@@ -21,4 +23,20 @@ func _on_MapsLoader_file_selected(path):
 	map = path
 	$MapsLoader.hide()
 	MapLoad = true
+	pass # Replace with function body.
+
+
+func _on_SaveResults_pressed():
+	emit_signal("save_results")
+	pass # Replace with function body.
+
+
+func _on_OnLoop_pressed():
+	emit_signal("loop",$OnLoop.pressed)
+	if $OnLoop.pressed:
+		$OnLoop/on_loop_value.editable = true
+		pass
+	else:
+		$OnLoop/on_loop_value.editable = false
+		pass
 	pass # Replace with function body.

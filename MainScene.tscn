@@ -19,4 +19,15 @@ margin_bottom = 246.0
 
 [node name="EndSimulationLabel" parent="." instance=ExtResource( 3 )]
 
+[node name="SaveResultsSimulations" type="FileDialog" parent="."]
+margin_right = 516.0
+margin_bottom = 211.0
+rect_min_size = Vector2( 150, 52.5 )
+window_title = "Guardar un Archivo"
+access = 2
+filters = PoolStringArray( "*.json" )
+
+[connection signal="loop" from="WindowDialog" to="." method="_on_WindowDialog_loop"]
+[connection signal="save_results" from="WindowDialog" to="." method="_on_WindowDialog_save_results"]
 [connection signal="start" from="WindowDialog" to="." method="_on_WindowDialog_start"]
+[connection signal="file_selected" from="SaveResultsSimulations" to="." method="_on_SaveResultsSimulations_file_selected"]

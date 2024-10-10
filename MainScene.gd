@@ -47,6 +47,10 @@ var EnemyFlag = null
 var IDS = AreasIDS.new()
 var FlagsTeams = {}
 var CameraScale = Vector2()
+var SimulationsResults = {}
+var SimulationID = 0
+var Loop = false
+var Count = 0
 
 func CurrentMap() -> Map:
 	return game_engine.GameMap
@@ -148,7 +152,7 @@ func SetFlags() -> void:
 	EnemyFlag = enemy_flag
 	
 	FlagsTeams[IDS.UserTeam] = Vector2(int(user_flag.global_position.x / BLOCK_SIZE),int(user_flag.global_position.y / BLOCK_SIZE))
-	FlagsTeams[IDS.EnemyTeam] = Vector2(int(enemy_flag.global_position.x / BLOCK_SIZE),int(enemy_flag.global_position.y / BLOCK_SIZE))	
+	FlagsTeams[IDS.EnemyTeam] = Vector2(int(enemy_flag.global_position.x / BLOCK_SIZE),int(enemy_flag.global_position.y / BLOCK_SIZE))
 	pass
 
 func GetFlagPosition(team: String):
@@ -168,6 +172,7 @@ func _ready():
 	pass
 
 func _physics_process(delta):
+	Count = $WindowDialog/OnLoop/on_loop_value.value
 	if Player and SIMULATION_STARTED:
 		EndSimulationLabel.rect_global_position = Player.global_position
 		if UserCommander and UserFlag:
@@ -251,7 +256,7 @@ func ConfigSimulation() -> void:
 	pass
 
 func ClearScene() -> void:
-	var nodes_to_keep = [$MainCamera,$WindowDialog,EndSimulationLabel]
+	var nodes_to_keep = [$MainCamera,$WindowDialog,EndSimulationLabel,$SaveResultsSimulations]
 	EnemySoldiers.clear()
 	UserSoldiers.clear()
 	for child in get_children():
@@ -264,11 +269,59 @@ func ClearScene() -> void:
 	pass
 
 func EndSimulation(team):
-	EndSimulationLabel.text = 'End of Simulation'
-	pass  
+	EndSimulationLabel.text = 'End of Simulation\n'
+	SimulationsResults['Simulation' + str(SimulationID)] = {
+		'SIZE': [ROW_SECTORS * SECTORS_DIMENTIONS,COLUMN_SECTORS*SECTORS_DIMENTIONS],
+		'SOLDIERS':MAX_SOLDIERS,
+		'VISION_RANGE':VisionRange,
+		'SOLDIER_REASONING_LATENCY':PerceptionLatency,
+		'COMMANDER_REASONING_LATENCY':CommanderLatency,
+		'FLAG_DEFENSIVE_RATIO':UserDefensiveRatio,
+		'LIFE_POINTS':SoldiersLifePoints,
+		'SAVE_DISTANCE_BETTEWN_SOLDIERS':SoldierSaveDistance,
+		'USER_MAX_DEFENDERS':MaxDefenders,
+		'USER_MAX_SEEKERS':MaxSeekers,
+		'ENEMY_MAX_DEFENDERS':EnemyMaxDefenders,
+		'ENEMY_MAX_SEEKERS':EnemyMaxSeekers,
+		'WINNER_TEAM':team
+	}
+	SimulationID += 1
+	if Loop and Count > 0:
+		Count -= 1
+		var nodes_to_keep = [$MainCamera,$WindowDialog,EndSimulationLabel,$SaveResultsSimulations]
+		EnemySoldiers.clear()
+		UserSoldiers.clear()
+		for child in get_children():
+			if not child in nodes_to_keep:
+				child.queue_free()
+				pass
+			pass
+		EndSimulationLabel.text = ''
+		StartSimulation()
+		pass
+	pass
 
 func _on_WindowDialog_start():
 	SIMULATION_STARTED = true
 	Set_Simulation_Parameters()
 	StartSimulation()
+	pass # Replace with function body.
+
+func _on_SaveResultsSimulations_file_selected(path):
+	var file = File.new()
+	if file.open(path,File.WRITE) == OK:
+		var content = JSON.print(SimulationsResults)
+		file.store_string(content)
+		file.close()
+		pass
+	$SaveResultsSimulations.hide()
+	pass # Replace with function body.
+
+func _on_WindowDialog_save_results():
+	$SaveResultsSimulations.show()
+	$SaveResultsSimulations.popup_centered()
+	pass # Replace with function body.
+
+func _on_WindowDialog_loop(state):
+	Loop = state
 	pass # Replace with function body.
