@@ -27,7 +27,7 @@ func _ready():
 func SetViewLimits(size: Vector2):
 	LIMIT_X = size.x
 	LIMIT_Y = size.y
-	Shooter.SetMapLimits(size)
+#	Shooter.SetMapLimits(size)
 	var scale_x = LIMIT_X / 575
 	var scale_y = LIMIT_Y / 575
 	$PlayerCamera.scale = Vector2(scale_x,scale_y)
@@ -38,18 +38,19 @@ func SetCameraScale(vector:Vector2) -> void:
 	pass
 
 func SetGameParameters(blocks_size: int, offset_positions: Vector2,map:Map):
-	$PlayerItem.SetGameParameters(blocks_size,offset_positions)
-	$PlayerItem.SetGameMap(map)
+#	$PlayerItem.SetGameParameters(blocks_size,offset_positions)
+#	$PlayerItem.SetGameMap(map)
 	pass
 
 func GetBussyCells() -> Array:
-	return $PlayerItem.GetBussyCells()
+#	return $PlayerItem.GetBussyCells()
+	return []
 
 func Rotate() -> void:
 	var vector = global_position - LastPosition
-	if vector.length_squared() > 0:
-		$PlayerItem.rotation = vector.angle() + PI / 2
-		pass
+#	if vector.length_squared() > 0:
+#		$PlayerItem.rotation = vector.angle() + PI / 2
+#		pass
 	pass
 
 func _physics_process(delta):
@@ -77,21 +78,21 @@ func _physics_process(delta):
 	
 	var rotating = false
 	
-	if Input.is_action_pressed("rotate_left") and not InstructionsOn:
-		$PlayerItem.rotation_degrees -= 3
-		rotating = true
-		pass
-	
-	if Input.is_action_pressed("rotate_right") and not InstructionsOn:
-		$PlayerItem.rotation_degrees += 5
-		rotating = true
-		pass
-	
-	if Input.is_action_just_pressed("shoot") and not InstructionsOn:
-		var bullet = Shooter.Shoot(TEAM)
-		bullet.rotation = playerItem.rotation
-		get_tree().current_scene.AddBullet(bullet)
-		pass
+#	if Input.is_action_pressed("rotate_left") and not InstructionsOn:
+#		$PlayerItem.rotation_degrees -= 3
+#		rotating = true
+#		pass
+#
+#	if Input.is_action_pressed("rotate_right") and not InstructionsOn:
+#		$PlayerItem.rotation_degrees += 5
+#		rotating = true
+#		pass
+#
+#	if Input.is_action_just_pressed("shoot") and not InstructionsOn:
+#		var bullet = Shooter.Shoot(TEAM)
+#		bullet.rotation = playerItem.rotation
+#		get_tree().current_scene.AddBullet(bullet)
+#		pass
 
 	if Input.is_action_just_pressed("Instructions_Input"):
 		if InstructionsOn:
