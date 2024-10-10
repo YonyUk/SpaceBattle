@@ -10,6 +10,7 @@ var Heap = HeapMin.new()
 # boolean map that represents this map
 var map := []
 var bussy_cells := []
+var SIZE := Vector2()
 
 func GenerateMap(row_sectors,column_sectors,sectors_dimension) -> Array:
 	map = Generator.get_map_formatted(row_sectors,column_sectors,sectors_dimension)
@@ -39,6 +40,7 @@ func LoadMap(path:String) -> Vector2:
 	var parse_data = parse_json(data)
 	var x_size = parse_data['size'][0]
 	var y_size = parse_data['size'][1]
+	SIZE = Vector2(x_size,y_size)
 	var result = []
 	for i in range(x_size):
 		var row = []

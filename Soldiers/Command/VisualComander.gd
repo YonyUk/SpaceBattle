@@ -36,6 +36,11 @@ var Attacking = false
 var Seeking = false
 var OnCapture = false
 var PositionToDefend = null
+var FlagUnderAttack = false
+
+func SetFlagUnderAttack(value:bool) -> void:
+	FlagUnderAttack = value
+	pass
 
 func SetMaxDefenders(value:int) -> void:
 	StaticMaxDefenders = value
@@ -248,7 +253,7 @@ func _defend_flag(strategy:GameState) -> void:
 		PositionToDefend = ship_to_destroy.global_position
 		pass
 	else:
-		PositionToDefend = null
+		PositionToDefend = selfFlagPosition * BLOCKS_SIZE + OFFSET_POSITION
 		pass
 	pass
 
@@ -430,7 +435,7 @@ func _update_perception() -> void:
 		pass
 	var percep = CommanderPerception.new()
 	percep.setFlagFound(FlagFound)
-	percep.setUnderAttack(_is_under_attack(TotalEnemysSeen))
+	percep.setUnderAttack(_is_under_attack(TotalEnemysSeen) or FlagUnderAttack)
 	percep.setFlagInTargetPos(_flag_in_target_pos(TotalEnemysSeen))
 	percep.setEnemys(TotalEnemysSeen)
 	percep.setSoldiersShooted(_soldier_shooted())

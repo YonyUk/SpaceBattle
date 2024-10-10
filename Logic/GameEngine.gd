@@ -28,9 +28,12 @@ var SoldiersLifePoints := 0
 var SoldiersLowLimitLifePoints := 0
 var SoldiersSaveDistance = 20
 var FlagsPositions = {}
+var ViewLimits = Vector2()
 
 func LoadMap(path:String) -> Vector2:
-	return GameMap.LoadMap(path)
+	var limits = GameMap.LoadMap(path)
+	ViewLimits = GameMap.SIZE
+	return limits
 
 func ExportMap(path: String,name: String) -> void:
 	GameMap.ExportMap(path,name)
@@ -88,7 +91,9 @@ func SetFlag(team):
 	flag.position = SetFlagPosition(team)
 	return flag
 
-func GetMapLimits():
+func GetMapLimits(loaded=false):
+	if loaded:
+		return ViewLimits * BLOCKS_SIZE
 	var x = COLUMN_SECTORS * SECTORS_DIMENTIONS
 	var y = ROW_SECTORS * SECTORS_DIMENTIONS
 	return Vector2(x,y) * BLOCKS_SIZE

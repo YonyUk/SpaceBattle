@@ -28,6 +28,15 @@ var CurrentStrategy = null
 var ShipsJustJoined = false
 var ShipsStatesAssignatedCopy = {}
 var PositionToDefend = null
+var Defending = false
+var OnCapture = false
+var Seeking = false
+var Attacking = false
+var FlagUnderAttack = false
+
+func SetFlagUnderAttack(value:bool) -> void:
+	FlagUnderAttack = value
+	pass
 
 func _ready():
 	soldierItem = $EnemyCommandItem
@@ -44,7 +53,7 @@ func _ready():
 	StrategyBrain.SetGameState(StaticMinDefenders,selfFlagPosition,Subordinades,TEAM)
 	StrategyBrain.BuildMapSectors()
 	for sector in StrategyBrain.MapSectors:
-		if sector.x > GameMap.XSize() / 4:
+		if sector.x < (GameMap.XSize() / 4) * 3:
 			SectorsToExplore.append(Vector2(sector.x,sector.y))
 			pass
 		pass
@@ -230,7 +239,7 @@ func _defend_flag() -> void:
 		PositionToDefend = ship_to_destroy.global_position
 		pass
 	else:
-		PositionToDefend = null
+		PositionToDefend = selfFlagPosition * BLOCKS_SIZE + OFFSET_POSITION
 		pass
 	pass
 
@@ -269,6 +278,10 @@ func _attack() -> void:
 	pass
 
 func search_flag() -> void:
+	Defending = false
+	OnCapture = false
+	Seeking = true
+	Attacking = false
 	ShipsJustJoined = false
 	_search_flag()
 	ReasoningLatency = StaticReasoningLatency
@@ -290,6 +303,10 @@ func search_flag() -> void:
 	pass
 
 func get_flag() -> void:
+	Defending = false
+	OnCapture = true
+	Seeking = false
+	Attacking = false
 	if not ShipsJustJoined:
 		ShipsJustJoined = _join_ships(CurrentStrategy)
 		pass
@@ -306,11 +323,19 @@ func get_flag() -> void:
 	pass
 
 func attack() ->void:
+	Defending = false
+	OnCapture = false
+	Seeking = false
+	Attacking = true
 	_attack()
 	ReasoningLatency = int(StaticReasoningLatency / 2)
 	pass
 
 func defend() -> void:
+	Defending = true
+	OnCapture = false
+	Seeking = false
+	Attacking = false
 	_defend_flag()
 	ShipsJustJoined = false
 	ReasoningLatency = int(StaticReasoningLatency / 2)
@@ -361,7 +386,8 @@ func EXECUTE(action:String) -> void:
 
 func _update_perception() -> void:
 	for ship in Subordinades:
-		var distance = (ship.global_position - CurrentSectorToExplore*BLOCKS_SIZE + OFFSET_POSITION).length_squared()
+		var discrete_pos = Vector2(int(ship.global_position.x / BLOCKS_SIZE),int(ship.global_position.y / BLOCKS_SIZE))
+		var distance = (discrete_pos - CurrentSectorToExplore).length_squared()
 		if sqrt(distance) < exploredSectorDistance and not CurrentSectorToExplore in SectorsSeen:
 			SectorsSeen.append(CurrentSectorToExplore)
 			SectorSeen = true
@@ -383,7 +409,7 @@ func _update_perception() -> void:
 		pass
 	var percep = CommanderPerception.new()
 	percep.setFlagFound(FlagFound)
-	percep.setUnderAttack(_is_under_attack(TotalEnemysSeen))
+	percep.setUnderAttack(_is_under_attack(TotalEnemysSeen) or FlagUnderAttack)
 	percep.setFlagInTargetPos(_flag_in_target_pos(TotalEnemysSeen))
 	percep.setEnemys(TotalEnemysSeen)
 	percep.setSoldiersShooted(_soldier_shooted())
@@ -428,7 +454,7 @@ func _physics_process(delta):
 			pass
 		ReasoningTimer = 0
 		pass
-	else:
+	elif not Defending:
 		CommandeDefenders()
 		pass
 	ReasoningTimer += 1

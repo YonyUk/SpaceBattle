@@ -13,7 +13,7 @@ onready var soldiersInstancer = preload("res://Soldiers/VisualSoldier.tscn")
 onready var userCommanderInstancer = preload("res://Soldiers/Command/VisualComander.tscn")
 onready var enemyCommanderInstancer = preload("res://Soldiers/Command/VisualEnemyCommander.tscn")
 onready var FlagInstancer = preload("res://Flags/Flag.tscn")
-onready var BackGround = $BackGround
+onready var EndSimulationLabel = $EndSimulationLabel
 
 var SIMULATION_STARTED = false
 var game_engine = GameEngine.new()
@@ -42,6 +42,8 @@ var UserSoldiers = []
 var EnemySoldiers = []
 var UserCommander = null
 var EnemyCommander = null
+var UserFlag = null
+var EnemyFlag = null
 var IDS = AreasIDS.new()
 var FlagsTeams = {}
 var CameraScale = Vector2()
@@ -122,9 +124,10 @@ func GenerateCommanders() -> void:
 	pass
 
 func GetMapLimits():
-	var MapSize = game_engine.GetMapLimits()
+	var MapSize = game_engine.GetMapLimits($WindowDialog.MapLoad)
 	var screen_size = get_viewport().size
 	CameraScale = Vector2(float(MapSize.x / screen_size.x),float(MapSize.y / screen_size.y)) * 2
+	CameraScale = Vector2(8,20)
 	return MapSize
 
 func SetPlayer() -> void:
@@ -140,6 +143,10 @@ func SetFlags() -> void:
 	var enemy_flag = game_engine.SetFlag(IDS.EnemyTeam)
 	add_child(user_flag)
 	add_child(enemy_flag)
+	
+	UserFlag = user_flag
+	EnemyFlag = enemy_flag
+	
 	FlagsTeams[IDS.UserTeam] = Vector2(int(user_flag.global_position.x / BLOCK_SIZE),int(user_flag.global_position.y / BLOCK_SIZE))
 	FlagsTeams[IDS.EnemyTeam] = Vector2(int(enemy_flag.global_position.x / BLOCK_SIZE),int(enemy_flag.global_position.y / BLOCK_SIZE))	
 	pass
@@ -157,25 +164,25 @@ func ExportMaps(maps: int) -> void:
 	pass
 
 func _ready():
-#	var size = game_engine.LoadMap('SavedMaps/map10.json')
-#	COLUMN_SECTORS = size[0]
-#	ROW_SECTORS = size[1]
-	# setting up the game_engine
-	
-	var screen = get_viewport_rect()
-	var bg_position = Vector2(screen.size.x / 2,screen.size.y / 2)
-	BackGround.global_position = bg_position
 	ConfigSimulation()
 	pass
 
 func _physics_process(delta):
 	if Player and SIMULATION_STARTED:
-		BackGround.position = Player.position
+		EndSimulationLabel.rect_global_position = Player.global_position
+		if UserCommander and UserFlag:
+			UserCommander.SetFlagUnderAttack(UserFlag.UnderAttack)
+			pass
+		if EnemyCommander and EnemyFlag:
+			EnemyCommander.SetFlagUnderAttack(EnemyFlag.UnderAttack)
+			pass
 		pass
 	pass
 
 func DrawMap():
-	game_engine.CreateMap(ROW_SECTORS,COLUMN_SECTORS,SECTORS_DIMENTIONS)
+	if not $WindowDialog.MapLoad:
+		game_engine.CreateMap(ROW_SECTORS,COLUMN_SECTORS,SECTORS_DIMENTIONS)
+		pass
 	WIDTH = game_engine.GameMap.map[0].size() * BLOCK_SIZE
 	HEIGHT = game_engine.GameMap.map.size() * BLOCK_SIZE
 	for i in range(game_engine.GameMap.map[0].size()):
@@ -194,6 +201,11 @@ func DrawMap():
 func Set_Simulation_Parameters() -> void:
 	ROW_SECTORS = $WindowDialog/ROW_SECTORS.value
 	COLUMN_SECTORS = $WindowDialog/COLUMN_SECTORS.value
+	if $WindowDialog.MapLoad:
+		var size = game_engine.LoadMap($WindowDialog.map)
+		COLUMN_SECTORS = size[0]
+		ROW_SECTORS = size[1]
+		pass
 	SECTORS_DIMENTIONS = $WindowDialog/SECTORS_COUNT.value
 	MAX_SOLDIERS = $WindowDialog/SOLDIERS.value
 	VisionRange = $WindowDialog/VISION_RANGE.value
@@ -233,12 +245,13 @@ func StartSimulation() -> void:
 	pass
 
 func ConfigSimulation() -> void:
+	$WindowDialog.MapLoad = false
 	$WindowDialog.show()
 	$WindowDialog.popup_centered()
 	pass
 
 func ClearScene() -> void:
-	var nodes_to_keep = [BackGround,$MainCamera,$WindowDialog]
+	var nodes_to_keep = [$MainCamera,$WindowDialog,EndSimulationLabel]
 	EnemySoldiers.clear()
 	UserSoldiers.clear()
 	for child in get_children():
@@ -247,10 +260,11 @@ func ClearScene() -> void:
 			pass
 		pass
 	ConfigSimulation()
+	EndSimulationLabel.text = ''
 	pass
 
 func EndSimulation(team):
-	print(team)
+	EndSimulationLabel.text = 'End of Simulation'
 	pass  
 
 func _on_WindowDialog_start():

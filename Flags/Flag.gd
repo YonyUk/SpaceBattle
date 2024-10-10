@@ -9,7 +9,10 @@ var IDS = AreasIDS.new()
 var ID = IDS.FlagID
 var TEAM = ''
 var COLOR = ''
-var LIFE = 1000
+var LIFE = 90000
+var UnderAttack = false
+var counter = 180
+var _counter = 0
 
 var flagsItem = {}
 
@@ -21,11 +24,22 @@ func _ready():
 	add_child(flagsItem[COLOR])
 	pass
 
+func _physics_process(delta):
+	if _counter < counter:
+		_counter += 1
+		pass
+	else:
+		UnderAttack = false
+		pass
+	pass
+
 func SetFlagItem(color: String) -> void:
 	COLOR = color
 	pass
 
 func Destroy(damage:int) -> void:
+	_counter = 0
+	UnderAttack = true
 	LIFE -= damage
 	if LIFE <= 0:
 		get_tree().current_scene.EndSimulation(TEAM)

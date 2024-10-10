@@ -380,7 +380,9 @@ func _on_VisualSoldier_area_entered(area):
 
 func _on_ShipRadar_ShipDetected(ship):
 	if not ship == self and not ship == soldierItem and not ship.TEAM == TEAM and not ship.ID == IDS.BulletID:
-		EnemysSeen.append(ship)
+		if ship.ID == IDS.SoldierID or ship.ID == IDS.FlagID:
+			EnemysSeen.append(ship)
+			pass
 		pass
 	if not ship == self and not ship == soldierItem and ship.ID == IDS.BulletID:
 		bulletsSeen.append([ship,ship.global_position])

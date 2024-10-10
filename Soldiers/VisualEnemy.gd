@@ -32,8 +32,16 @@ func _on_VisualEnemy_area_entered(area):
 	pass # Replace with function body.
 
 func _on_ShipRadar_ShipDetected(ship):
-	var IsShip = ship.ID == IDS.SoldierID or ship.ID == IDS.CommandID or ship.ID == IDS.UserID
-	if not ship == self and not ship == soldierItem and not ship.TEAM == TEAM and IsShip:
-		EnemysSeen.append(ship)
+	if not ship == self and not ship == soldierItem and not ship.TEAM == TEAM and not ship.ID == IDS.BulletID:
+		if ship.ID == IDS.SoldierID or ship.ID == IDS.FlagID:
+			EnemysSeen.append(ship)
+			pass
+		pass
+	if not ship == self and not ship == soldierItem and ship.ID == IDS.BulletID:
+		bulletsSeen.append([ship,ship.global_position])
+		pass
+	if ship.ID == IDS.FlagID and not ship.TEAM == TEAM:
+		EnemyFlagFound = true
+		EnemyFlagPosition = Vector2(int(ship.global_position.x / BLOCKS_SIZE),int(ship.global_position.y / BLOCKS_SIZE))
 		pass
 	pass
