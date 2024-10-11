@@ -259,6 +259,7 @@ func ConfigSimulation() -> void:
 func ClearScene() -> void:
 	if not SIMULATION_ENDED:
 		EndSimulation('NONE')
+		EndSimulationLabel.text = ''
 		pass
 	else:
 		var nodes_to_keep = [$MainCamera,$WindowDialog,EndSimulationLabel,$SaveResultsSimulations]
