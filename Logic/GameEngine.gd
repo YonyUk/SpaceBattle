@@ -43,15 +43,60 @@ var GameRecords = {
 }
 
 func OffensiveAction(team:String) -> void:
-	GameRecords[team]['OFFENSIVE_ACTIONS'] += 1
+	if team == IDS.UserTeam:
+		if GameRecords[IDS.EnemyTeam]['OFFENSIVE_ACTIONS'] > 0:
+			GameRecords[IDS.EnemyTeam]['OFFENSIVE_ACTIONS'] -= 1
+			pass
+		else:
+			GameRecords[team]['OFFENSIVE_ACTIONS'] += 1
+			pass
+		pass
+	elif team == IDS.EnemyTeam:
+		if GameRecords[IDS.UserTeam]['OFFENSIVE_ACTIONS'] > 0:
+			GameRecords[IDS.UserTeam]['OFFENSIVE_ACTIONS'] -= 1
+			pass
+		else:
+			GameRecords[team]['OFFENSIVE_ACTIONS'] += 1
+			pass
+		pass
 	pass
 
 func DefensiveAction(team:String) -> void:
-	GameRecords[team]['DEFENSIVE_ACTIONS'] += 1
+	if team == IDS.UserTeam:
+		if GameRecords[IDS.EnemyTeam]['DEFENSIVE_ACTIONS'] > 0:
+			GameRecords[IDS.EnemyTeam]['DEFENSIVE_ACTIONS'] -= 1
+			pass
+		else:
+			GameRecords[team]['DEFENSIVE_ACTIONS'] += 1
+			pass
+		pass
+	elif team == IDS.EnemyTeam:
+		if GameRecords[IDS.UserTeam]['DEFENSIVE_ACTIONS'] > 0:
+			GameRecords[IDS.UserTeam]['DEFENSIVE_ACTIONS'] -= 1
+			pass
+		else:
+			GameRecords[team]['DEFENSIVE_ACTIONS'] += 1
+			pass
+		pass
 	pass
 
 func FlagCaptureAttemp(team:String) -> void:
-	GameRecords[team]['FLAG_CAPTURE_ATTEMPS'] += 1
+	if team == IDS.UserTeam:
+		if GameRecords[IDS.EnemyTeam]['FLAG_CAPTURE_ATTEMPS'] > 0:
+			GameRecords[IDS.EnemyTeam]['FLAG_CAPTURE_ATTEMPS'] -= 1
+			pass
+		else:
+			GameRecords[team]['FLAG_CAPTURE_ATTEMPS'] += 1
+			pass
+		pass
+	elif team == IDS.EnemyTeam:
+		if GameRecords[IDS.UserTeam]['FLAG_CAPTURE_ATTEMPS'] > 0:
+			GameRecords[IDS.UserTeam]['FLAG_CAPTURE_ATTEMPS'] -= 1
+			pass
+		else:
+			GameRecords[team]['FLAG_CAPTURE_ATTEMPS'] += 1
+			pass
+		pass
 	pass
 
 func ClearHistory() -> void:
