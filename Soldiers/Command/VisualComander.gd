@@ -415,6 +415,19 @@ func GetCurrentEnemys(team: String) -> Array:
 func EXECUTE(action:String) -> void:
 	var action_function = funcref(self,action)
 	action_function.call_func()
+	UPDATE_RECORDS(action)
+	pass
+
+func UPDATE_RECORDS(action:String) -> void:
+	if action == 'defend':
+		GAME_ENGINE.DefensiveAction(TEAM)
+		pass
+	elif action == 'search_flag' or action == 'attack':
+		GAME_ENGINE.OffensiveAction(TEAM)
+		pass
+	elif action == 'get_flag':
+		GAME_ENGINE.FlagCaptureAttemp(TEAM)
+		pass
 	pass
 
 func _update_perception() -> void:

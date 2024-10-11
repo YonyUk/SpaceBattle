@@ -29,6 +29,45 @@ var SoldiersLowLimitLifePoints := 0
 var SoldiersSaveDistance = 20
 var FlagsPositions = {}
 var ViewLimits = Vector2()
+var GameRecords = {
+	IDS.UserTeam:{
+		'OFFENSIVE_ACTIONS':0,
+		'DEFENSIVE_ACTIONS':0,
+		'FLAG_CAPTURE_ATTEMPS':0,
+	},
+	IDS.EnemyTeam:{
+		'OFFENSIVE_ACTIONS':0,
+		'DEFENSIVE_ACTIONS':0,
+		'FLAG_CAPTURE_ATTEMPS':0,
+	}
+}
+
+func OffensiveAction(team:String) -> void:
+	GameRecords[team]['OFFENSIVE_ACTIONS'] += 1
+	pass
+
+func DefensiveAction(team:String) -> void:
+	GameRecords[team]['DEFENSIVE_ACTIONS'] += 1
+	pass
+
+func FlagCaptureAttemp(team:String) -> void:
+	GameRecords[team]['FLAG_CAPTURE_ATTEMPS'] += 1
+	pass
+
+func ClearHistory() -> void:
+	GameRecords = {
+		IDS.UserTeam:{
+			'OFFENSIVE_ACTIONS':0,
+			'DEFENSIVE_ACTIONS':0,
+			'FLAG_CAPTURE_ATTEMPS':0,
+		},
+		IDS.EnemyTeam:{
+			'OFFENSIVE_ACTIONS':0,
+			'DEFENSIVE_ACTIONS':0,
+			'FLAG_CAPTURE_ATTEMPS':0,
+		}
+	}
+	pass
 
 func LoadMap(path:String) -> Vector2:
 	var limits = GameMap.LoadMap(path)

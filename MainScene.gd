@@ -51,6 +51,7 @@ var SimulationsResults = {}
 var SimulationID = 0
 var Loop = false
 var Count = 0
+var SIMULATION_ENDED = false
 
 func CurrentMap() -> Map:
 	return game_engine.GameMap
@@ -226,6 +227,7 @@ func Set_Simulation_Parameters() -> void:
 
 func StartSimulation() -> void:
 	SIMULATION_STARTED = true
+	SIMULATION_ENDED = false
 	game_engine.SetSoldierSaveDistance(SoldierSaveDistance)
 	game_engine.SetMapParameters(BLOCK_SIZE,OFFSET_POSITION)
 	game_engine.SetSoldiersLifePoints(SoldiersLifePoints)
@@ -255,19 +257,25 @@ func ConfigSimulation() -> void:
 	pass
 
 func ClearScene() -> void:
-	var nodes_to_keep = [$MainCamera,$WindowDialog,EndSimulationLabel,$SaveResultsSimulations]
-	EnemySoldiers.clear()
-	UserSoldiers.clear()
-	for child in get_children():
-		if not child in nodes_to_keep:
-			child.queue_free()
-			pass
+	if not SIMULATION_ENDED:
+		EndSimulation('NONE')
 		pass
-	ConfigSimulation()
-	EndSimulationLabel.text = ''
+	else:
+		var nodes_to_keep = [$MainCamera,$WindowDialog,EndSimulationLabel,$SaveResultsSimulations]
+		EnemySoldiers.clear()
+		UserSoldiers.clear()
+		for child in get_children():
+			if not child in nodes_to_keep:
+				child.queue_free()
+				pass
+			pass
+		ConfigSimulation()
+		EndSimulationLabel.text = ''
+		pass
 	pass
 
 func EndSimulation(team):
+	SIMULATION_ENDED = true
 	EndSimulationLabel.text = 'End of Simulation\n'
 	EndSimulationLabel.text += 'Looser Team: ' + team
 	SimulationsResults['Simulation' + str(SimulationID)] = {
@@ -283,8 +291,10 @@ func EndSimulation(team):
 		'USER_MAX_SEEKERS':MaxSeekers,
 		'ENEMY_MAX_DEFENDERS':EnemyMaxDefenders,
 		'ENEMY_MAX_SEEKERS':EnemyMaxSeekers,
-		'LOOSER_TEAM':team
+		'LOOSER_TEAM':team,
+		'HISTORY':game_engine.GameRecords
 	}
+	game_engine.ClearHistory()
 	SimulationID += 1
 	if Loop and Count > 0:
 		Count -= 1
