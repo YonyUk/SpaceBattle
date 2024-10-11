@@ -4,6 +4,7 @@
 [ext_resource path="res://Fonts/Font.tres" type="DynamicFont" id=2]
 
 [node name="SimulationStarterWindow" type="WindowDialog"]
+visible = true
 margin_left = 2.0
 margin_top = 20.0
 margin_right = 692.0
@@ -128,7 +129,7 @@ margin_top = 75.0
 margin_right = 667.0
 margin_bottom = 99.0
 min_value = 5.0
-max_value = 20.0
+max_value = 60.0
 value = 5.0
 
 [node name="soldiers" type="RichTextLabel" parent="SOLDIERS"]
