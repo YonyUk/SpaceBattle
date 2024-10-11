@@ -326,4 +326,4 @@ text = "Loop"
 [connection signal="file_selected" from="MapsLoader" to="." method="_on_MapsLoader_file_selected"]
 [connection signal="pressed" from="SaveResults" to="." method="_on_SaveResults_pressed"]
 [connection signal="pressed" from="OnLoop" to="." method="_on_OnLoop_pressed"]
-[connection signal="changed" from="OnLoop/on_loop_value" to="." method="_on_on_loop_value_changed"]
+[connection signal="value_changed" from="OnLoop/on_loop_value" to="." method="_on_on_loop_value_value_changed"]
