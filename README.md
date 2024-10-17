@@ -6,8 +6,6 @@
 ### Abdel Fregel Hernández
 ### José Miguel Pérez Pérez
 
-<font size=`3px`>
-
 **`Space Battle`** es una simulación interactiva donde se modela el enfrentamiento entre dos equipos en un espacio determinado para lograr un objetivo, donde cada equipo puede interferir en las acciones del otro equipo.
 
 En la simulación participan dos equipos conformados por un comandante y un conjunto de subordinados a su disposición, además, cada integrante de cada equipo esta equipado con la capacidad de destruir integrantes del equipo contrario. Cada equipo tiene por objetivo capturar la bandera del equipo contrario. La simulación llega a su fin en el momento en el que uno de los dos equipos capture la bandera del otro, uno de los dos comandantes sea destruido o ambos comandantes se queden sin subordinados.
@@ -105,6 +103,17 @@ Estos agentes siguen una arquitectura **BDI** para poder **razonar** sobre su am
 ### Generación de estrategias
 
 Dada el objetivo a realizar decidido por el comandante, este realiza un proceso de búsqueda de la mejor forma de conseguirlo, moviéndose a través de los posibles de estados a los que puede acceder desde el estado en que se encuentra, hasta que llegue a un estado en el cual se cumplen las restricciones para las cuales se considera que el objetivo se ha cumplido. Un estado es una distribución de naves en el mapa con las instrucciones dadas.
+
+#### Defensa
+La heurística seguida para la defensa es, encontrar la forma más rápida de llegar a la posición que está siendo atacada priorizando mantener los puntos de vida de las naves hasta la llegada al punto indicado y minimizando el tiempo de llegada de las naves a dicho punto
+
+#### Ataque y captura de la bandera
+La heurística seguida aquí es, acumular la mayor cantidad de naves posibles en un punto cercano al punto que se desea tomar, y una vez alcanzado este máximo, dirigirse al punto de ataque, todas las rutas que se computan son priorizando la vida de las naves y la velocidad de llegada a el putno escogido
+
+#### Búsqueda de la bandera
+Aquí seguimos una heurística de cubrir el mayor espacio posible, minimizando así el tiempo de descubrimiento de la bandera enemiga
+
+
 
 ## Experimentación
 
