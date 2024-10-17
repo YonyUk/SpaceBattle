@@ -98,7 +98,7 @@ Estos agentes basan su comportamiento en un conjunto de reglas de deducción int
 
 ### Agentes comandantes
 
-Estos agentes siguen una arquitectura **BDI** para poder **razonar** sobre su ambiente y las decisiones que desea tomar para lograr sus objetivos, los cuales van cambiando a lo largo de la simulación, pues aunque el objetivo principal es capturar la bandera enemiga, deben poder escoger entre defender o atacar. Es por eso que consideramos que una arquitectura **BDI** era más adecuada para el objetivo buscado, ya que permite modelar el processo de razonamiento para obtener la acción a realizar.
+Estos agentes siguen una arquitectura **BDI** para poder **razonar** sobre su ambiente y las decisiones que desea tomar para lograr sus objetivos, los cuales van cambiando a lo largo de la simulación, pues aunque el objetivo principal es capturar la bandera enemiga, deben poder escoger entre defender o atacar. Es por eso que consideramos que una arquitectura **BDI** era más adecuada para el objetivo buscado, ya que permite modelar el processo de razonamiento para obtener la acción a realizar. Aquí, dado que el comandante puede llegar a querer hacer varias intenciones, el filtrado que se hace para escoger cual se va a realizar está dado por una cola de prioridades. Estas prioridades son cambiadas en base a un historial de juegos anteriores y del propio juego por un LLM(Gemini)
 
 ### Generación de estrategias
 
